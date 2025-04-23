@@ -46,8 +46,8 @@ def load_model():
 pipe = llm.load_model()
 
 # --- Streamlit アプリケーション ---
-st.title("🤖 Gemma 2 Chatbot with Feedback")
-st.write("Gemmaモデルを使用したチャットボットです。回答に対してフィードバックを行えます。")
+st.title("🤖 Qwen Chatbot with Feedback")
+st.write("Qwenモデルを使用したチャットボットです。回答に対してフィードバックを行えます。")
 st.markdown("---")
 
 # --- サイドバー ---
@@ -78,4 +78,4 @@ elif st.session_state.page == "サンプルデータ管理":
 
 # --- フッターなど（任意） ---
 st.sidebar.markdown("---")
-st.sidebar.info("開発者: [Your Name]")
+st.sidebar.info("開発者: Kaoru")
