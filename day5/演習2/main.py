@@ -187,7 +187,7 @@ class ModelTester:
     @staticmethod
     def save_model(
         model,
-        path=f"models/titanic_model_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pkl",
+        path=f"titanic_model_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pkl",
     ):
         model_dir = "models"
         os.makedirs(model_dir, exist_ok=True)
@@ -198,7 +198,7 @@ class ModelTester:
 
     @staticmethod
     def load_model(
-        path=f"models/titanic_model_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pkl",
+        path=f"titanic_model_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pkl",
     ):
         """モデルを読み込む"""
         with open(path, "rb") as f:
