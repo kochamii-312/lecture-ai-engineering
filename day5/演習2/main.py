@@ -25,7 +25,7 @@ class DataLoader:
         else:
             # ローカルのファイル
             local_path = os.path.join(
-                os.path.dirname(__file__), "..", "data", "Titanic.csv"
+                os.path.dirname(__file__), "data", "Titanic.csv"
             )
             if os.path.exists(local_path):
                 return pd.read_csv(local_path)
