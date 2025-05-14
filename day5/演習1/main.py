@@ -118,7 +118,9 @@ if __name__ == "__main__":
 
     model_dir = "models"
     os.makedirs(model_dir, exist_ok=True)
-    model_path = os.path.join(model_dir, f"titanic_model_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pkl")
+    model_path = os.path.join(
+        model_dir, f"titanic_model_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pkl"
+    )
     with open(model_path, "wb") as f:
         pickle.dump(model, f)
     print(f"モデルを {model_path} に保存しました")
