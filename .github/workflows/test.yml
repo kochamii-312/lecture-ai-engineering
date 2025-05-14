@@ -36,9 +36,9 @@ jobs:
     
     - name: Run main.py
       run: |
-        pytest day5/演習1/main.py -v
-        pytest day5/演習1/pipeline.py -v
-        pytest day5/演習2/main.py -v
+        python3 day5/演習1/main.py -v
+        python3 day5/演習1/pipeline.py -v
+        python3 day5/演習2/main.py -v
 
     - name: Run data tests
       run: |
