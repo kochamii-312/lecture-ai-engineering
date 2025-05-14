@@ -10,7 +10,6 @@ from sklearn.impute import SimpleImputer
 import pickle
 import time
 import great_expectations as gx
-import logging
 from datetime import datetime
 
 
@@ -183,8 +182,6 @@ class ModelTester:
         inference_time = time.time() - start_time
 
         accuracy = accuracy_score(y_test, y_pred)
-        logging.basicConfig(filename="logs/metrics.log", level=logging.INFO)
-        logging.info(f"Accuracy: {accuracy}, inference_time: {inference_time}")
         return {"accuracy": accuracy, "inference_time": inference_time}
 
     @staticmethod
