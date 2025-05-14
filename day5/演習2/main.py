@@ -13,6 +13,7 @@ import great_expectations as gx
 import logging
 from datetime import datetime
 
+
 class DataLoader:
     """データロードを行うクラス"""
 
@@ -187,7 +188,10 @@ class ModelTester:
         return {"accuracy": accuracy, "inference_time": inference_time}
 
     @staticmethod
-    def save_model(model, path=f"models/titanic_model_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pkl"):
+    def save_model(
+        model,
+        path=f"models/titanic_model_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pkl",
+    ):
         model_dir = "models"
         os.makedirs(model_dir, exist_ok=True)
         model_path = os.path.join(model_dir, path)
@@ -196,7 +200,9 @@ class ModelTester:
         return path
 
     @staticmethod
-    def load_model(path=f"models/titanic_model_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pkl"):
+    def load_model(
+        path=f"models/titanic_model_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pkl",
+    ):
         """モデルを読み込む"""
         with open(path, "rb") as f:
             model = pickle.load(f)
