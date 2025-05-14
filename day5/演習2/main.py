@@ -10,6 +10,8 @@ from sklearn.impute import SimpleImputer
 import pickle
 import time
 import great_expectations as gx
+from datetime import datetime
+
 
 class DataLoader:
     """データロードを行うクラス"""
@@ -21,7 +23,7 @@ class DataLoader:
             return pd.read_csv(path)
         else:
             # ローカルのファイル
-            local_path = "data/Titanic.csv"
+            local_path = os.path.join(os.path.dirname(__file__), "data", "Titanic.csv")
             if os.path.exists(local_path):
                 return pd.read_csv(local_path)
 
@@ -183,16 +185,21 @@ class ModelTester:
         return {"accuracy": accuracy, "inference_time": inference_time}
 
     @staticmethod
-    def save_model(model, path="models/titanic_model.pkl"):
+    def save_model(
+        model,
+        path=f"titanic_model_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pkl",
+    ):
         model_dir = "models"
         os.makedirs(model_dir, exist_ok=True)
-        model_path = os.path.join(model_dir, f"titanic_model.pkl")
+        model_path = os.path.join(model_dir, path)
         with open(model_path, "wb") as f:
             pickle.dump(model, f)
         return path
 
     @staticmethod
-    def load_model(path="models/titanic_model.pkl"):
+    def load_model(
+        path=f"titanic_model_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pkl",
+    ):
         """モデルを読み込む"""
         with open(path, "rb") as f:
             model = pickle.load(f)
