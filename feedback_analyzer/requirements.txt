@@ -1,0 +1,11 @@
+streamlit
+torch
+transformers
+openai
+python-dotenv
+pandas
+nltk
+scikit-learn
+accelerate
+janome
+pyngrok
