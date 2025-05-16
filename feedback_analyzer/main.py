@@ -1,29 +1,28 @@
 # main.py
 import streamlit as st
 import pandas as pd
-from classify import classify_comment_list
-from preprocess import preprocess_df
-from visualize import show_visualizations
+from classify import analyze_comments
+from visualize import show_all_visualizations
+from preprocess import merge_comment_columns
 
-st.title("講義アンケートコメント分析ツール（GPT-4o対応）")
+st.title("講義アンケートフィードバック分析ツール")
 
 uploaded_file = st.file_uploader("CSVファイルをアップロードしてください", type="csv")
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
-    if 'comment' not in df.columns:
-        st.error("CSVに 'comment' カラムが必要です。")
-        st.stop()
 
-    st.write("アップロードされたデータ：", df.head())
+    df_long = merge_comment_columns(df)  # 複数列のコメントを1列に統合
+    st.write("統合されたコメント数：", len(df_long))
 
-    df = preprocess_df(df)
+    if st.button("GPT-4oで分類・分析する"):
+        result_df, summaries = analyze_comments(df_long)
 
-    if st.button("GPT-4oで分類する"):
-        df = classify_comment_list(df)
+        st.success("分類・分析が完了しました")
 
-        st.success("分類完了！")
-        st.dataframe(df)
+        show_all_visualizations(result_df, summaries)
 
-        show_visualizations(df)
-
-        st.download_button("CSV出力", df.to_csv(index=False).encode("utf-8"), file_name="classified_comments.csv")
+        st.download_button(
+            "分類結果をCSVでダウンロード",
+            result_df.to_csv(index=False).encode("utf-8"),
+            file_name="classified_output.csv"
+        )
