@@ -4,3 +4,4 @@ openai
 python-dotenv
 matplotlib
 seaborn
+pyngrok
