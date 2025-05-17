@@ -9,10 +9,7 @@ import pandas as pd
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-model = genai.GenerativeModel("models/gemini-1.5-pro-latest")
-
-for model in genai.list_models():
-    print(model.name, model.supported_generation_methods)
+model = genai.GenerativeModel("gemini-1.5-pro-latest")
 
 def classify_comment(comment: str) -> dict:
     prompt = f"""
