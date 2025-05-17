@@ -9,6 +9,8 @@ import pandas as pd
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
+model = genai.GenerativeModel("gemini-pro")
+
 def classify_comment(comment: str) -> dict:
     prompt = f"""
     次のコメントに対して、以下の4つをJSON形式で出力してください：
