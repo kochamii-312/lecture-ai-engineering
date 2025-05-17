@@ -1,5 +1,5 @@
 # classify.py
-import openai
+import google.generativeai as genai
 import os
 import time
 import json
@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 import pandas as pd
 
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 def classify_comment(comment: str) -> dict:
     prompt = f"""
@@ -24,12 +24,8 @@ def classify_comment(comment: str) -> dict:
     """
 
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4o",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.3
-        )
-        result = json.loads(response.choices[0].message.content)
+        response = model.generate_content(prompt)
+        result = json.loads(response.text.strip())
         return result
     except Exception as e:
         print(f"エラー: {e}")
