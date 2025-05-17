@@ -1,55 +1,65 @@
-# classify.py
-import google.generativeai as genai
+# classify.py (Hugging Face版)
 import os
 import time
 import json
-from dotenv import load_dotenv
 import pandas as pd
+import requests
+from dotenv import load_dotenv
 
 load_dotenv()
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+HF_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
+HF_API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-mnli"  # 多クラス分類＋ゼロショットに強いモデル
 
-model = genai.GenerativeModel("gemini-1.5-pro-latest")
+headers = {"Authorization": f"Bearer {HF_TOKEN}"}
 
-def classify_comment(comment: str) -> dict:
-    prompt = f"""
-    次のコメントに対して、以下の4つをJSON形式で出力してください：
-    1. sentiment: "ポジティブ" または "ネガティブ"
-    2. category: "講義内容", "講義資料", "運営", "その他" のいずれか
-    3. danger_score: 危険性（0〜1の小数、0.1単位）
-    4. importance_score: 重要性（0〜1の小数、具体性・緊急性・共通性を加味）
-
-    コメント:
-    """
-    {comment}
-    """
-    """
-
-    try:
-        response = model.generate_content(prompt)
-        result = json.loads(response.text.strip())
-        return result
-    except Exception as e:
-        print(f"エラー: {e}")
-        return {
-            "sentiment": "エラー",
-            "category": "不明",
-            "danger_score": 0,
-            "importance_score": 0
+def query_huggingface(texts, labels):
+    inputs = [{
+        "inputs": text,
+        "parameters": {
+            "candidate_labels": labels,
+            "multi_label": True
         }
+    } for text in texts]
+
+    results = []
+    for payload in inputs:
+        try:
+            response = requests.post(HF_API_URL, headers=headers, json=payload)
+            result = response.json()
+            results.append(result)
+        except Exception as e:
+            print("[ERROR]", e)
+            results.append({})
+        time.sleep(1.0)  # rate limit 対策
+    return results
 
 def analyze_comments(df: pd.DataFrame):
-    results = []
-    for comment in df["comment"]:
-        results.append(classify_comment(comment))
-        time.sleep(0.3)
+    texts = df["comment"].tolist()
 
-    df["sentiment"] = [r["sentiment"] for r in results]
-    df["category"] = [r["category"] for r in results]
-    df["danger_score"] = [r["danger_score"] for r in results]
-    df["importance_score"] = [r["importance_score"] for r in results]
+    # 感情分類（ポジ/ネガ）
+    sentiment_results = query_huggingface(texts, ["ポジティブ", "ネガティブ"])
+    categories_results = query_huggingface(texts, ["講義内容", "講義資料", "運営", "その他"])
 
-    # 要約用（ポジ・ネガ）
+    sentiments = []
+    categories = []
+
+    for sent_r, cat_r in zip(sentiment_results, categories_results):
+        try:
+            sentiments.append(max(zip(sent_r["scores"], sent_r["labels"]))[1])
+        except:
+            sentiments.append("不明")
+        try:
+            categories.append(max(zip(cat_r["scores"], cat_r["labels"]))[1])
+        except:
+            categories.append("その他")
+
+    df["sentiment"] = sentiments
+    df["category"] = categories
+
+    # ダミーのスコア（後でローカルモデル/関数化可能）
+    df["danger_score"] = [0.1 + 0.1 * ("怒" in c or "最悪" in c) for c in texts]
+    df["importance_score"] = [min(1.0, 0.1 * len(c.split("。"))) for c in texts]
+
     positive_summary = "\n".join(df[df["sentiment"] == "ポジティブ"]["comment"].head(10))
     negative_summary = "\n".join(df[df["sentiment"] == "ネガティブ"]["comment"].head(10))
 
