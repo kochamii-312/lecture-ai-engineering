@@ -9,7 +9,7 @@ import pandas as pd
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-model = genai.GenerativeModel("gemini-pro")
+model = genai.GenerativeModel(model_name="models/gemini-pro")  # モデル名はフル指定が必要！
 
 def classify_comment(comment: str) -> dict:
     prompt = f"""
