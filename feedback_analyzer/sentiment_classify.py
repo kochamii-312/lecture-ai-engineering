@@ -6,31 +6,50 @@ from main import df
 from preprocess import split_into_sentences
 from visualize import positive_comment_list, negative_comment_list
 
-def sentiment_classify(column_name):
+# メモ：ラベリングをその場でせず教師データから読み取る（yはカラム〇〇）
+class SentimentClassifier:
+    def __init__(self):
+        self.vectorizer = TfidfVectorizer()
+        self.model = LogisticRegression(max_iter=1000)
+    
+    def train_on(self, comment_series):
+        raw_comments = comment_series.drpona().tolist()    # 欠損値を削除, リスト化
+        self.comments = split_into_sentences(raw_comments) # 文単位で分割
+        self.train()
 
-    # 欠損値を削除, リスト化, 文単位で分割
-    comments = split_into_sentences(df[column_name].dropna().tolist())
+    def predict_on(self, comment_series):
+        raw_comments = comment_series.dropna().tolist()
+        self.comments = split_into_sentences(raw_comments)
+        self.predict_and_store()
 
-    sentiments = [get_sentiment_label(c) for c in comments]
+    def train(self):
+        labels = [get_sentiment_label(c) for c in self.comments]
 
-    df_filtered = df.loc[df[column_name].notna()].copy()
-    df_filtered['sentiment'] = sentiments
+        # 特徴量とラベルの準備
+        X = self.vectorizer.fit_transform(self.comments)
+        y = labels
 
-    vectorizer_sent = TfidfVectorizer()
-    X_sent = vectorizer_sent.fit_transform(comments)
-    y_sent = df_filtered['sentiment']
+        # 学習
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        self.model.fit(X_train, y_train)
 
-    X_train_s, X_test_s, y_train_s, y_test_s = train_test_split(X_sent, y_sent, test_size=0.2, random_state=42)
-    logreg = LogisticRegression(max_iter=1000)
-    logreg.fit(X_train_s, y_train_s)
+        print(f"感情分類モデル精度: {self.model.score(X_test, y_test):.3f}")
 
-    print(f"感情分類モデル精度: {logreg.score(X_test_s, y_test_s):.3f}")
+    def predict_and_store(self):
+        X = self.vectorizer.transform(self.comments)
+        predicted_sentiments = self.model.predict(X)
 
-    # 分類結果別でリストに格納
-    predicted_sentiments = logreg.predict(X_sent)
-
-    for comment, sent in zip(comments, predicted_sentiments):
-        if sent == "positive":
-            positive_comment_list.append(comment)
-        elif sent == "negative":
-            negative_comment_list.append(comment)   
+        # 分類結果別でリストに格納
+        for comment, sentiment in zip(self.comments, predicted_sentiments):
+            if sentiment == "positive":
+                positive_comment_list.append(comment)
+            elif sentiment == "negative":
+                negative_comment_list.append(comment)
+            else:
+                neutral_comment_list.appennd(comment)
+    
+    def get_results(self):
+        return {
+            "positive": positive_comment_list,
+            "negative": negative_comment_list
+        }
