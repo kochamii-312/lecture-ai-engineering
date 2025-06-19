@@ -3,15 +3,22 @@ import streamlit as st
 import pandas as pd
 from preprocess import merge_comment_columns
 from visualize import show_all_visualizations
+import io
 
 st.title("松尾研講義アンケート分析アプリ")
 
 st.sidebar.header("このアプリのガイド")
-st.sidebar.info("講義アンケートのCSVファイルをアップロードすると、重要なコメントや危険度の高いコメントを分析してCSVに出力します。")
+st.sidebar.info("講義アンケートのexcelファイルをアップロードすると、重要なコメントや危険度の高いコメントを分析します。")
 
-uploaded_file = st.file_uploader("CSVファイルをアップロードしてください", type="csv")
+uploaded_file = st.file_uploader("excelファイルをアップロードしてください", type="xlsx")
 if uploaded_file:
-    df = pd.read_csv(uploaded_file)
+    # DataFrameをCSV形式に変換（インデックス付き）
+    csv_buffer = io.StringIO()
+    uploaded_file.to_csv(csv_buffer, index=True)
+    csv_buffer.seek(0)  # 読み込み位置を先頭に戻す
+
+    # 変換したCSVを再度DataFrameとして読み込む
+    df = pd.read_csv(csv_buffer)
 
     # ファイルのデータを表示
     bytes_data = uploaded_file.getvalue()
