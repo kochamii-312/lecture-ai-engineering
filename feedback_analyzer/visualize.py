@@ -43,8 +43,14 @@ def show_setiment_visulization():
     「分かりにくかった点や不満があった点」の欄のコメントと、テキスト分類器の結果をnegative_comment_listに格納する
     それぞれのlistをクラスタリングして要約
     """
-    positive_comment_list.append(split_into_sentences(df[-5]))
-    negative_comment_list.append(split_into_sentences(df[-4]))
+    positive_col = "良かった部分"  # 実際のカラム名に変更
+    negative_col = "改善点"       # 実際のカラム名に変更
+    
+    positive_comment_list = split_into_sentences(df[positive_col].dropna().tolist())
+    negative_comment_list = split_into_sentences(df[negative_col].dropna().tolist())
+    
+    # positive_comment_list.append(split_into_sentences(df[-5]))
+    # negative_comment_list.append(split_into_sentences(df[-4]))
 
     columns = ['comment3_about_teacher', 'comment4_future_suggestions', 'comment5_free']
     train_comment_list = split_into_sentences(merge_comment_columns(train_df, columns))
@@ -61,18 +67,14 @@ def show_setiment_visulization():
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("ポジティブコメントの要約")
-        clusters = embedder.cluster_comments(positive_comment_list, n_clusters=5)
-        # メモ: LLMを使わず代表コメントでも
-        for cluster_id, items in clusters.items():
-            summary = embedder.summarize_cluster(items)
-            st.text(f"- クラスタ {cluster_id}. {summary}")
+        for i, (count, representative) in enumerate(embedder.cluster_and_rank(positive_comment_list), 5):
+            st.markdown(f"**{i}. 件数: {count}件**")
+            st.write(f"代表コメント: {representative}")
     with col2:
         st.subheader("ネガティブコメントの要約")
-        clusters = embedder.cluster_comments(negative_comment_list, n_clusters=5)
-        # メモ: LLMを使わず代表コメントでも
-        for cluster_id, items in clusters.items():
-            summary = embedder.summarize_cluster(items)
-            st.text(f"- クラスタ {cluster_id}. {summary}")
+        for i, (count, representative) in enumerate(embedder.cluster_and_rank(negative_comment_list), 5):
+            st.markdown(f"**{i}. 件数: {count}件**")
+            st.write(f"代表コメント: {representative}")
     st.divider()
 
 def show_category_visualization():
