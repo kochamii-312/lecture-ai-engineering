@@ -4,7 +4,6 @@ import requests
 import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
-from main import df
 from data import train_df
 from preprocess import split_into_sentences, merge_comment_columns
 from sentiment_classify import SentimentClassifier
