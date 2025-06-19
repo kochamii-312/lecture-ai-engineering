@@ -1,10 +1,8 @@
 # main.py
 import streamlit as st
 import pandas as pd
-from visualize import show_all_visualizations
 from preprocess import merge_comment_columns
-
-train_df = pd.read_csv('.csv')
+from visualize import show_all_visualizations
 
 st.title("松尾研講義アンケート分析アプリ")
 
@@ -25,12 +23,13 @@ if uploaded_file:
         st.dataframe(df.head())
 
     if st.button("GPT-4oで分類・分析する"):
+
         st.success("分類・分析が完了しました")
 
         show_all_visualizations()
 
-        st.download_button(
-            "分類結果をCSVでダウンロード",
-            result_df.to_csv(index=False).encode("utf-8"),
-            file_name="classified_output.csv"
-        )
+        # st.download_button(
+        #     "分類結果をCSVでダウンロード",
+        #     result_df.to_csv(index=False).encode("utf-8"),
+        #     file_name="classified_output.csv"
+        # )
