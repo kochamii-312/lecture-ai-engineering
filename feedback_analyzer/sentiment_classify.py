@@ -3,7 +3,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from labeling import get_sentiment_label
 from preprocess import split_into_sentences
-from visualize import positive_comment_list, negative_comment_list, neutral_comment_list
+from comment_lists import positive_comment_list, negative_comment_list, neutral_comment_list
 
 # メモ：ラベリングをその場でせず教師データから読み取る（yはカラム〇〇）
 class SentimentClassifier:

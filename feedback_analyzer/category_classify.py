@@ -3,7 +3,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.model_selection import train_test_split
 from preprocess import split_into_sentences
 from labeling import get_category_label
-from visualize import lecture_content_comment_list, lecture_materials_comment_list, operation_comment_list, others_comment_list
+from comment_lists import lecture_content_comment_list, lecture_materials_comment_list, operation_comment_list, others_comment_list
 
 # メモ：ラベリングをその場でせず教師データから読み取る（yはカラム〇〇）
 class CategoryClassifier:

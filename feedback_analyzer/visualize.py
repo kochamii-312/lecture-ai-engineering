@@ -10,20 +10,12 @@ from sentiment_classify import SentimentClassifier
 from category_classify import CategoryClassifier
 from clustering import CommentEmbedder
 from dotenv import load_dotenv
+from comment_lists import positive_comment_list, negative_comment_list, neutral_comment_list, lecture_content_comment_list, lecture_materials_comment_list, operation_comment_list, others_comment_list
 
 load_dotenv()
 HF_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
 
 headers = {"Authorization": f"Bearer {HF_TOKEN}"}
-
-positive_comment_list = []
-negative_comment_list = []
-neutral_comment_list = []
-
-lecture_content_comment_list = []
-lecture_materials_comment_list = []
-operation_comment_list = []
-others_comment_list = []
 
 # メモ：講義回ごとに分ける
 # メモ：CSVファイルで出力できるようにする
