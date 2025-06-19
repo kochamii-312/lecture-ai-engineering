@@ -12,9 +12,12 @@ st.sidebar.info("講義アンケートのexcelファイルをアップロード�
 
 uploaded_file = st.file_uploader("excelファイルをアップロードしてください", type="xlsx")
 if uploaded_file:
+    # Excelファイルを読み込む
+    excel_df = pd.read_excel(uploaded_file)
+    
     # DataFrameをCSV形式に変換（インデックス付き）
     csv_buffer = io.StringIO()
-    uploaded_file.to_csv(csv_buffer, index=True)
+    excel_df.to_csv(csv_buffer, index=True)
     csv_buffer.seek(0)  # 読み込み位置を先頭に戻す
 
     # 変換したCSVを再度DataFrameとして読み込む
