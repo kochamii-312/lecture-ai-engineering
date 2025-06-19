@@ -19,23 +19,22 @@ headers = {"Authorization": f"Bearer {HF_TOKEN}"}
 
 # メモ：講義回ごとに分ける
 # メモ：CSVファイルで出力できるようにする
-def show_all_visualizations():
+def show_all_visualizations(df):
     st.header("分析結果")
     st.subheader("感情分析")
-    show_setiment_visulization()
+    show_setiment_visulization(df)
     st.divider()
     st.subheader("カテゴリ別")
     show_category_visualization()
     st.divider()
-    show_dangerous_comment_visualization()
+    show_dangerous_comment_visualization(df)
 
-def show_setiment_visulization():
+def show_setiment_visulization(df):
     """
     「特に良かった部分」の欄のコメントと、テキスト分類器の結果をpositive_comment_listに格納、
     「分かりにくかった点や不満があった点」の欄のコメントと、テキスト分類器の結果をnegative_comment_listに格納する
     それぞれのlistをクラスタリングして要約
     """
-    from main import df
     positive_comment_list.append(split_into_sentences(df[-5]))
     negative_comment_list.append(split_into_sentences(df[-4]))
 
@@ -127,8 +126,7 @@ def show_category_visualization():
             st.markdown(f"**{i}. 件数: {count}件**")
             st.write(f"代表コメント: {representative}")
 
-def show_dangerous_comment_visualization():
-    from main import df
+def show_dangerous_comment_visualization(df):
     columns = ['comment1_positive, comment2_negative, commet3_about_teacher, comment4_future_suggestions, comment5_free']
     flagged_comments = detect_dangerous_comments(split_into_sentences(merge_comment_columns(df, columns)))
     if flagged_comments != 0:

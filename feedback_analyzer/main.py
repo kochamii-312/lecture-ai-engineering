@@ -36,7 +36,7 @@ if uploaded_file:
 
         st.success("分類・分析が完了しました")
 
-        show_all_visualizations()
+        show_all_visualizations(df)
 
         # st.download_button(
         #     "分類結果をCSVでダウンロード",
