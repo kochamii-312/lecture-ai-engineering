@@ -44,6 +44,7 @@ def show_setiment_visulization():
     「分かりにくかった点や不満があった点」の欄のコメントと、テキスト分類器の結果をnegative_comment_listに格納する
     それぞれのlistをクラスタリングして要約
     """
+    from main import df
     positive_comment_list.append(split_into_sentences(df[-5]))
     negative_comment_list.append(split_into_sentences(df[-4]))
 
@@ -136,6 +137,7 @@ def show_category_visualization():
             st.write(f"代表コメント: {representative}")
 
 def show_dangerous_comment_visualization():
+    from main import df
     columns = ['comment1_positive, comment2_negative, commet3_about_teacher, comment4_future_suggestions, comment5_free']
     flagged_comments = detect_dangerous_comments(split_into_sentences(merge_comment_columns(df, columns)))
     if flagged_comments != 0:
