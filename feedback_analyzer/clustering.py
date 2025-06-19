@@ -70,9 +70,6 @@ class CommentEmbedder:
         return result[0]['summary_text'] if isinstance(result, list) and 'summary_text' in result[0] else "（要約失敗）"
     
     def cluster_and_rank(self, texts, n_clusters=10):
-        """
-        コメントをクラスタリングして件数と代表文をまとめたcluster_summaryを返す
-        """
         embeddings = self.get_embeddings(texts)
         kmeans = KMeans(n_clusters=n_clusters, random_state=42).fit(embeddings)
         labels = kmeans.labels_
