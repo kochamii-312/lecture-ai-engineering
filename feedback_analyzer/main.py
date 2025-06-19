@@ -10,7 +10,7 @@ st.title("松尾研講義アンケート分析アプリ")
 st.sidebar.header("このアプリのガイド")
 st.sidebar.info("講義アンケートのexcelファイルをアップロードすると、重要なコメントや危険度の高いコメントを分析します。")
 
-uploaded_file = st.file_uploader("excelファイルをアップロードしてください", type="xlsx")
+uploaded_file = st.file_uploader("excelファイルをアップロードしてください", type=["xlsx", "xls"], key="excel_upload") # key引数で明示的に識別子を指定
 if uploaded_file:
     # Excelファイルを読み込む
     excel_df = pd.read_excel(uploaded_file)
