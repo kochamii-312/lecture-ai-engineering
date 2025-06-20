@@ -18,7 +18,6 @@ class SentimentClassifier:
     def train_on(self, comment_list):
         # NaNや空文字を除去
         clean_comments = [c for c in comment_list if isinstance(c, str) and c.strip()]
-        print("split前の有効コメント数:", len(self.comments))
         self.comments = split_into_sentences(clean_comments)
         print("split後の文数:", len(self.comments))
         self.train()
