@@ -20,6 +20,8 @@ def split_into_sentences(comment_list):
             sentence = sentence.strip()
             if sentence:  # 空文字は除外
                 sentence_list.append(sentence)
+    print("sentence_list: ", sentence_list)
+    print("sentence_listの件数: ", len(sentence_list))
     return sentence_list
 
 def merge_comment_columns(df, column_names, sep=" "):

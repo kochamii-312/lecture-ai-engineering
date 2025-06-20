@@ -1,5 +1,6 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
+import streamlit as st
 from sklearn.model_selection import train_test_split
 from labeling import get_sentiment_label
 from preprocess import split_into_sentences
@@ -27,6 +28,10 @@ class SentimentClassifier:
         self.predict_and_store()
 
     def train(self):
+        if not self.comments:
+            st.warning("⚠️ 学習用コメントが空です。train() をスキップします。")
+            return
+    
         labels = [get_sentiment_label(comment) for comment in self.comments]
 
         # 特徴量とラベルの準備
