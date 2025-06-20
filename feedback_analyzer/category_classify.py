@@ -11,14 +11,16 @@ class CategoryClassifier:
         self.vectorizer = TfidfVectorizer()
         self.model = MultinomialNB()
     
-    def train_on(self, comment_series):
-        raw_comments = comment_series.dropna().tolist()    # 欠損値を削除, リスト化
-        self.comments = split_into_sentences(raw_comments) # 文単位で分割
+    def train_on(self, comment_list):
+        # NaNや空文字を除去
+        clean_comments = [c for c in comment_list if isinstance(c, str) and c.strip()]
+        self.comments = split_into_sentences(clean_comments)
         self.train()
 
-    def predict_on(self, comment_series):
-        raw_comments = comment_series.dropna().tolist()
-        self.comments = split_into_sentences(raw_comments)
+    def predict_on(self, comment_list):
+        # NaNや空文字を除去
+        clean_comments = [c for c in comment_list if isinstance(c, str) and c.strip()]
+        self.comments = split_into_sentences(clean_comments)
         self.predict_and_store()
 
     def train(self):
