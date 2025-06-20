@@ -17,6 +17,9 @@ def get_sentiment_label(comment):
         response = requests.post(API_URL, headers=headers, json={"inputs": comment})
         result = response.json()
 
+        print(f"[DEBUG] API status: {response.status_code}")
+        print(f"[DEBUG] API text: {response.text}")
+
         if isinstance(result, list):
             label = result[0][0]['label']
             return {

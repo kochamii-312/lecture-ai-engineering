@@ -19,6 +19,10 @@ class CommentEmbedder:
         api_url = "https://api-inference.huggingface.co/intfloat/multilingual-e5-small"
         response = requests.post(api_url, headers=self.headers, json={"inputs": text})
         embedding = response.json()
+
+        print(f"[DEBUG] API status: {response.status_code}")
+        print(f"[DEBUG] API text: {response.text}")
+
         return embedding[0] if isinstance(embedding, list) else embedding
 
     def get_embeddings(self, texts):
@@ -67,6 +71,10 @@ class CommentEmbedder:
 
         response = requests.post(api_url, headers=self.headers, json={"inputs": input_text})
         result = response.json()
+        
+        print(f"[DEBUG] API status: {response.status_code}")
+        print(f"[DEBUG] API text: {response.text}")
+
         return result[0]['summary_text'] if isinstance(result, list) and 'summary_text' in result[0] else "（要約失敗）"
     
     def cluster_and_rank(self, texts, n_clusters=10):
