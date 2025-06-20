@@ -24,10 +24,7 @@ def split_into_sentences(comment_list):
     print("sentence_listの件数: ", len(sentence_list))
     return sentence_list
 
-def merge_comment_columns(df: pd.DataFrame, 
-                         columns: List[Union[int, str]], 
-                         sep: str = " ",
-                         empty_value: str = "") -> List[str]:
+def merge_comment_columns(df, columns, sep=" ", empty_value=""):
     """
     複数のカラムを1つのリストにまとめる関数
     
