@@ -1,6 +1,6 @@
+import streamlit as st
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
-import streamlit as st
 from sklearn.model_selection import train_test_split
 from labeling import get_sentiment_label
 from preprocess import split_into_sentences
@@ -18,7 +18,9 @@ class SentimentClassifier:
     def train_on(self, comment_list):
         # NaNや空文字を除去
         clean_comments = [c for c in comment_list if isinstance(c, str) and c.strip()]
+        print("split前の有効コメント数:", len(self.comments))
         self.comments = split_into_sentences(clean_comments)
+        print("split後の文数:", len(self.comments))
         self.train()
 
     def predict_on(self, comment_list):
@@ -56,6 +58,7 @@ class SentimentClassifier:
                 self.negative_comments.append(comment)
             else:
                 self.neutral_comments.append(comment)
+    
     def get_results(self):
         return {
             "positive": positive_comment_list,

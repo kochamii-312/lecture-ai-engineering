@@ -24,12 +24,12 @@ def split_into_sentences(comment_list):
     print("sentence_listの件数: ", len(sentence_list))
     return sentence_list
 
-def merge_comment_columns(df, column_names, sep=" "):
+def merge_comment_columns(df, columns, sep=" "):
     """
     複数のカラムを1つのリストにまとめる関数
     Parameters:
         df (pd.DataFrame): 元のデータフレーム
-        column_names (list of str): 結合対象のカラム名リスト
+        columns (list of number): 結合対象のカラム番号リスト
         sep (str): 各カラム間の区切り文字（デフォルトは空白）
 
     Returns:
@@ -40,7 +40,7 @@ def merge_comment_columns(df, column_names, sep=" "):
     # 行ごとに処理
     for index, row in df.iterrows():
         values = []
-        for col in column_names:
+        for col in columns:
             if col in row and pd.notna(row[col]):
                 values.append(str(row[col]).strip())
         if values:

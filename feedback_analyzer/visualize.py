@@ -40,9 +40,12 @@ def show_sentiment_visulization(df):
     positive_comment_list.append(split_into_sentences(df[positive_column_name]))
     negative_comment_list.append(split_into_sentences(df[negative_column_name]))
 
-    columns = ['comment3_about_teacher', 'comment4_future_suggestions', 'comment5_free']
+    # columns = ['comment3_about_teacher', 'comment4_future_suggestions', 'comment5_free']
+    columns = [19, 20, 21]
     train_comment_list = split_into_sentences(merge_comment_columns(train_df, columns))
     comment_list = split_into_sentences(merge_comment_columns(df, columns))
+
+    print("元の train_comment_list 件数:", len(train_comment_list))
     
     sc = SentimentClassifier()
     sc.train_on(train_comment_list)
@@ -70,7 +73,8 @@ def show_sentiment_visulization(df):
     st.divider()
 
 def show_category_visualization():
-    columns = ['comment1_positive, comment2_negative, commet3_about_teacher, comment4_future_suggestions, comment5_free']
+    # columns = ['comment1_positive, comment2_negative, commet3_about_teacher, comment4_future_suggestions, comment5_free']
+    columns = [17, 18, 19, 20, 21]
     train_comment_list = split_into_sentences(merge_comment_columns(train_df, columns))
     cc = CategoryClassifier()
     cc.train_on(train_comment_list)
@@ -129,7 +133,8 @@ def show_category_visualization():
             st.write(f"代表コメント: {representative}")
 
 def show_dangerous_comment_visualization(df):
-    columns = ['comment1_positive, comment2_negative, commet3_about_teacher, comment4_future_suggestions, comment5_free']
+    # columns = ['comment1_positive, comment2_negative, commet3_about_teacher, comment4_future_suggestions, comment5_free']
+    columns = [17, 18, 19, 20, 21]
     flagged_comments = detect_dangerous_comments(split_into_sentences(merge_comment_columns(df, columns)))
     if flagged_comments != 0:
         st.text(f"⚠️ 危険コメント {len(flagged_comments)} 件検出:")
