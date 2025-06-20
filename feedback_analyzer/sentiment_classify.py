@@ -20,6 +20,25 @@ class SentimentClassifier:
         self.comments = split_into_sentences(clean_comments)
         self.train()
 
+    def predict_on(self, comment_list):
+        # NaNや空文字を除去
+        clean_comments = [c for c in comment_list if isinstance(c, str) and c.strip()]
+        self.comments = split_into_sentences(clean_comments)
+        self.predict_and_store()
+
+    def train(self):
+        labels = [get_sentiment_label(comment) for comment in self.comments]
+
+        # 特徴量とラベルの準備
+        X = self.vectorizer.fit_transform(self.comments)
+        y = labels
+
+        # 学習
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        self.model.fit(X_train, y_train)
+
+        print(f"感情分類モデル精度: {self.model.score(X_test, y_test):.3f}")
+
     def predict_and_store(self):
         X = self.vectorizer.transform(self.comments)
         predicted_sentiments = self.model.predict(X)
@@ -31,7 +50,7 @@ class SentimentClassifier:
             elif sentiment == "negative":
                 self.negative_comments.append(comment)
             else:
-                self.neutral_comments.append(comment)  # 修正: appennd → append
+                self.neutral_comments.append(comment)
     def get_results(self):
         return {
             "positive": positive_comment_list,
