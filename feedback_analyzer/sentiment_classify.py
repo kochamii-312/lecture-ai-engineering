@@ -14,9 +14,10 @@ class SentimentClassifier:
         self.negative_comments = []
         self.neutral_comments = []
     
-    def train_on(self, comment_series):
-        raw_comments = comment_series.dropna().tolist()  # 修正: drpona → dropna
-        self.comments = split_into_sentences(raw_comments)
+    def train_on(self, comment_list):
+        # NaNや空文字を除去
+        clean_comments = [c for c in comment_list if isinstance(c, str) and c.strip()]
+        self.comments = split_into_sentences(clean_comments)
         self.train()
 
     def predict_and_store(self):
