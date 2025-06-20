@@ -62,7 +62,7 @@ class CommentEmbedder:
         """
         複数の文(クラスタ)を結合してHugging FaceのAPIで要約する
         """
-        api_url = "https://api-inference.huggingface.co/csebuetnlp/mT5_multilingual_XLSum"
+        api_url = "https://api-inference.huggingface.co/models/csebuetnlp/mT5_multilingual_XLSum"
         input_text = " ".join(cluster_texts)
 
         response = requests.post(api_url, headers=self.headers, json={"inputs": input_text})

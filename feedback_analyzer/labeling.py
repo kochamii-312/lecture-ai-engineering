@@ -12,7 +12,7 @@ def get_sentiment_label(comment):
     コメントを"positive", "negative", "neutral", "ironic"に分類
     日本語専用に訓練されたLLMベースの感情分類モデルdaigo/bert-base-japanese-sentiment-ironyを使用
     """
-    API_URL = "https://api-inference.huggingface.co/kit-nlp/bert-base-japanese-sentiment-irony"
+    API_URL = "https://api-inference.huggingface.co/models/kit-nlp/bert-base-japanese-sentiment-irony"
     try:
         response = requests.post(API_URL, headers=headers, json={"inputs": comment})
         result = response.json()
@@ -36,7 +36,7 @@ def get_category_label(comment):
     コメントを4つのカテゴリ「講義内容」「講義資料」「運営」「その他」に分類
     多言語対応(日本語含む)でゼロショット分類が得意なLLMベースのモデルXLM-RoBERTa-largeを使用
     """
-    API_URL = "https://api-inference.huggingface.co/joeddav/xlm-roberta-large-xnli"
+    API_URL = "https://api-inference.huggingface.co/models/joeddav/xlm-roberta-large-xnli"
     candidate_labels = ["講義内容", "講義資料", "運営", "その他"]
     payload = {
         "inputs": comment,
