@@ -37,13 +37,25 @@ def merge_comment_columns(df, columns, sep=" "):
     """
     merged_list = []
 
-    # 行ごとに処理
-    for index, row in df.iterrows():
-        values = []
-        for col in columns:
-            if col in row and pd.notna(row[col]):
-                values.append(str(row[col]).strip())
-        if values:
-            merged_list.append(sep.join(values))
+    if not isinstance(df, pd.DataFrame):
+        raise TypeError("dfはpandas.DataFrameである必要があります")
     
+    if not isinstance(columns, list) or not columns:
+        raise ValueError("columnsは空でないリストである必要があります")
+    
+    if not isinstance(sep, str):
+        raise TypeError("sepは文字列である必要があります")
+
+    for col in columns:
+        if isinstance(col, int):
+            if col < 0 or col >= len(df.columns):
+                raise ValueError(f"カラム番号{col}は範囲外（0-{len(df.columns)-1}）")
+            merged_list.append(df.columns[col])
+        elif isinstance(col, str):
+            if col not in df.columns:
+                raise ValueError(f"カラム'{col}'が存在しません")
+            merged_list.append(col)
+        else:
+            raise TypeError(f"カラム指定は整数または文字列である必要があります: {col}")
+        
     return merged_list
