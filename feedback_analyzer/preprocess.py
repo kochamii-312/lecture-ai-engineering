@@ -34,8 +34,14 @@ def merge_comment_columns(df, column_names, sep=" "):
         list of str: 各行を結合した1つのリスト
     """
     merged_list = []
-    for _, row in df[column_names].dropna(how="all").iterrows():
-        values = [str(row[col]).strip() for col in column_names if pd.notna(row[col])]
+
+    # 行ごとに処理
+    for index, row in df.iterrows():
+        values = []
+        for col in column_names:
+            if col in row and pd.notna(row[col]):
+                values.append(str(row[col]).strip())
         if values:
             merged_list.append(sep.join(values))
+    
     return merged_list
