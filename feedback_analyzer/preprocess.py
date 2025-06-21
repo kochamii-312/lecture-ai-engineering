@@ -15,7 +15,7 @@ def split_into_sentences(comment_list):
         if not isinstance(comment, str):  # ← 安全チェック追加
             continue
         # 「。」や「！」改行などで分割（必要に応じて追加）
-        sentences = re.split(r'[。．!?\n\\n]', comment)
+        sentences = re.split(r'(?:[。．！？!?]+(?:\\n|\n)?|\\n)', comment)
         for sentence in sentences:
             sentence = sentence.strip()
             if sentence:  # 空文字は除外
