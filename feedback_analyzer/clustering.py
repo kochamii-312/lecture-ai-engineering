@@ -20,6 +20,7 @@ class CommentEmbedder:
         api_url = "https://api-inference.huggingface.co/intfloat/multilingual-e5-small"
         response = requests.post(api_url, headers=self.headers, json={"inputs": text})
         embedding = response.json()
+        time.sleep(3)
 
         print(f"[DEBUG] API status: {response.status_code}")
         print(f"[DEBUG] API text: {response.text}")
