@@ -53,9 +53,9 @@ class SentimentClassifier:
 
         # 結果をインスタンス変数に格納
         for comment, sentiment in zip(self.comments, predicted_sentiments):
-            if sentiment == "positive":
+            if sentiment == "POSITIVE":
                 self.positive_comments.append(comment)
-            elif sentiment == "negative":
+            elif sentiment == "NEGATIVE":
                 self.negative_comments.append(comment)
             else:
                 self.neutral_comments.append(comment)

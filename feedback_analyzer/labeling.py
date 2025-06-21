@@ -13,26 +13,6 @@ HF_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
 headers = {"Authorization": f"Bearer {HF_TOKEN}"}
 
 def get_sentiment_label(comment):
-    API_URL = "https://api-inference.huggingface.co/models/daigo/bert-base-japanese-sentiment"
-    response = requests.post(API_URL, headers=headers, json={"inputs": comment})
-    print(f"[DEBUG] Status Code: {response.status_code}")
-    print(f"[DEBUG] Response Text: {response.text}")
-    try:
-        result = response.json()
-        if isinstance(result, list):
-            label = result[0][0]['label']
-            return {
-                "ポジティブ": "positive",
-                "ネガティブ": "negative",
-                "中立": "neutral"
-            }.get(label, "neutral")
-        else:
-            return "neutral"
-    except Exception as e:
-        print(f"[ERROR] Failed to parse JSON for: {comment[:30]}... → {e}")
-        return "neutral"
-
-# def get_sentiment_label(comment):
     """
     コメントを"positive", "negative", "neutral", "ironic"に分類
     日本語専用に訓練されたLLMベースの感情分類モデルdaigo/bert-base-japanese-sentiment-ironyを使用
@@ -63,9 +43,20 @@ def get_sentiment_label(comment):
     #     print(f"[DEBUG] API text: {response.text}")
     #     return "neutral"
     
-    # emotion_analyzer = MLAsk()
-    # emotion_results = []
-    # for comment_i in comment
+    emotion_analyzer = MLAsk()
+    try:
+        analyze_result = emotion_analyzer.analyze(comment)
+        imp = analyze_result['orientation']
+        if imp == "mostly_POSITIVE":
+            imp = "positive"
+        elif imp == "mostly_NEGATIVE":
+            imp = "negative"
+        else:
+            imp = imp
+    except:
+        imp = "NONE"
+    return imp
+
 
 def get_category_label(comment):
     """
