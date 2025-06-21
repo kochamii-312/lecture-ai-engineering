@@ -4,6 +4,7 @@ import requests
 import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
+import time
 from data import train_df
 from preprocess import split_into_sentences, merge_comment_columns
 from sentiment_classify import SentimentClassifier
@@ -157,6 +158,7 @@ def detect_dangerous_comments(texts, threshold=0.8):
         }
         response = requests.post(api_url, headers=headers, json=payload)
         result = response.json()
+        time.sleep(3)
         if result["labels"][0] == label_danger and result["scores"][0] > threshold:
             flagged.append((text, result["scores"][0]))
     if not flagged:

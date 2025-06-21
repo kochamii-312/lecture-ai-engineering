@@ -1,5 +1,6 @@
 import os
 import requests
+import time
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -16,6 +17,7 @@ def get_sentiment_label(comment):
     try:
         response = requests.post(API_URL, headers=headers, json={"inputs": comment})
         result = response.json()
+        time.sleep(3)
 
         print(f"[DEBUG] API status: {response.status_code}")
         print(f"[DEBUG] API text: {response.text}")
@@ -47,6 +49,7 @@ def get_category_label(comment):
     }
     response = requests.post(API_URL, headers=headers, json=payload)
     result = response.json()
+    time.sleep(3)
     if "labels" in result:
         return result["labels"][0] # 最もスコアの高いカテゴリ
     return "その他"

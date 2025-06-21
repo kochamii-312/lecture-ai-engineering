@@ -1,5 +1,6 @@
 import requests
 import numpy as np
+import time
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.cluster import KMeans
 from sklearn.metrics.pairwise import cosine_distances
@@ -71,6 +72,7 @@ class CommentEmbedder:
 
         response = requests.post(api_url, headers=self.headers, json={"inputs": input_text})
         result = response.json()
+        time.sleep(3)
         
         print(f"[DEBUG] API status: {response.status_code}")
         print(f"[DEBUG] API text: {response.text}")
