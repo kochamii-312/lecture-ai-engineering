@@ -13,35 +13,56 @@ HF_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
 headers = {"Authorization": f"Bearer {HF_TOKEN}"}
 
 def get_sentiment_label(comment):
-    """
-    コメントを"positive", "negative", "neutral", "ironic"に分類
-    日本語専用に訓練されたLLMベースの感情分類モデルdaigo/bert-base-japanese-sentiment-ironyを使用
-    """
-    API_URL = "https://api-inference.huggingface.co/models/kit-nlp/bert-base-japanese-sentiment-irony"
-    print("HF_TOKEN: ", HF_TOKEN)
+    API_URL = "https://api-inference.huggingface.co/models/daigo/bert-base-japanese-sentiment"
+    response = requests.post(API_URL, headers=headers, json={"inputs": comment})
+    print(f"[DEBUG] Status Code: {response.status_code}")
+    print(f"[DEBUG] Response Text: {response.text}")
     try:
-        response = requests.post(API_URL, headers=headers, json={"inputs": comment})
         result = response.json()
-        time.sleep(3)
-
-        print(f"[DEBUG] API status: {response.status_code}")
-        print(f"[DEBUG] API text: {response.text}")
-
         if isinstance(result, list):
             label = result[0][0]['label']
             return {
-                "positive": "positive",
-                "negative": "negative",
-                "neutral": "neutral",
-                "ironic": "negative"  # 皮肉をネガティブ扱いにマッピング
+                "ポジティブ": "positive",
+                "ネガティブ": "negative",
+                "中立": "neutral"
             }.get(label, "neutral")
         else:
             return "neutral"
     except Exception as e:
-        print(f"[ERROR] API failed for: {comment[:30]}... → {e}")
-        print(f"[DEBUG] API status: {response.status_code}")
-        print(f"[DEBUG] API text: {response.text}")
+        print(f"[ERROR] Failed to parse JSON for: {comment[:30]}... → {e}")
         return "neutral"
+
+# def get_sentiment_label(comment):
+    """
+    コメントを"positive", "negative", "neutral", "ironic"に分類
+    日本語専用に訓練されたLLMベースの感情分類モデルdaigo/bert-base-japanese-sentiment-ironyを使用
+    """
+    # API_URL = "https://api-inference.huggingface.co/models/kit-nlp/bert-base-japanese-sentiment-irony"
+    # print("HF_TOKEN: ", HF_TOKEN)
+    # try:
+    #     response = requests.post(API_URL, headers=headers, json={"inputs": comment})
+    #     result = response.json()
+    #     time.sleep(3)
+
+    #     print(f"[DEBUG] API status: {response.status_code}")
+    #     print(f"[DEBUG] API text: {response.text}")
+
+    #     if isinstance(result, list):
+    #         label = result[0][0]['label']
+    #         return {
+    #             "positive": "positive",
+    #             "negative": "negative",
+    #             "neutral": "neutral",
+    #             "ironic": "negative"  # 皮肉をネガティブ扱いにマッピング
+    #         }.get(label, "neutral")
+    #     else:
+    #         return "neutral"
+    # except Exception as e:
+    #     print(f"[ERROR] API failed for: {comment[:30]}... → {e}")
+    #     print(f"[DEBUG] API status: {response.status_code}")
+    #     print(f"[DEBUG] API text: {response.text}")
+    #     return "neutral"
+    
     # emotion_analyzer = MLAsk()
     # emotion_results = []
     # for comment_i in comment
