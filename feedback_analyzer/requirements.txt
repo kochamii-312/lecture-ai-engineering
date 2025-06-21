@@ -9,4 +9,4 @@ scikit-learn
 
 pymlask
 mecab-python3
-unidic
+unidic-lite
