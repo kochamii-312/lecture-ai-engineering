@@ -54,6 +54,8 @@ def show_sentiment_visulization(df):
     sc.train_on(train_comment_list)
     sc.predict_on(comment_list)
 
+    print("訓練後の train_comment_list 件数:", len(train_comment_list))
+
     # クラスタリング
     embedder = CommentEmbedder(hf_token=HF_TOKEN)
 
