@@ -19,7 +19,6 @@ class SentimentClassifier:
         # NaNや空文字を除去
         clean_comments = [c for c in comment_list if isinstance(c, str) and c.strip()]
         self.comments = split_into_sentences(clean_comments)
-        print("split後の文数:", len(self.comments))
         self.train()
 
     def predict_on(self, comment_list):
@@ -31,9 +30,12 @@ class SentimentClassifier:
     def train(self):
         if not self.comments:
             st.warning("⚠️ 学習用コメントが空です。train() をスキップします。")
+            print("学習用コメントが空")
             return
-    
+
+        print("train()が始まった")
         labels = [get_sentiment_label(comment) for comment in self.comments]
+        print("labels: ", labels)
 
         # 特徴量とラベルの準備
         X = self.vectorizer.fit_transform(self.comments)

@@ -1,6 +1,10 @@
 import os
 import requests
 import time
+import pandas as pd
+import MeCab
+import matplotlib.pyplot as plt
+from mlask import MLAsk
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -14,6 +18,7 @@ def get_sentiment_label(comment):
     日本語専用に訓練されたLLMベースの感情分類モデルdaigo/bert-base-japanese-sentiment-ironyを使用
     """
     API_URL = "https://api-inference.huggingface.co/models/kit-nlp/bert-base-japanese-sentiment-irony"
+    print("HF_TOKEN: ", HF_TOKEN)
     try:
         response = requests.post(API_URL, headers=headers, json={"inputs": comment})
         result = response.json()
@@ -35,6 +40,9 @@ def get_sentiment_label(comment):
     except Exception as e:
         print(f"[ERROR] API failed for: {comment[:30]}... → {e}")
         return "neutral"
+    # emotion_analyzer = MLAsk()
+    # emotion_results = []
+    # for comment_i in comment
 
 def get_category_label(comment):
     """

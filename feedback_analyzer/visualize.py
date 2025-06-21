@@ -36,8 +36,7 @@ def show_sentiment_visulization(df):
     「分かりにくかった点や不満があった点」の欄のコメントと、テキスト分類器の結果をnegative_comment_listに格納する
     それぞれのlistをクラスタリングして要約
     """
-    # print("元のpositive_comment_list 件数: ", len(positive_comment_list))
-    # print("元のnegative_comment_list 件数: ", len(negative_comment_list))
+
     positive_column_name = df.columns[17]
     negative_column_name = df.columns[18]
     positive_comment_list = split_into_sentences(df[positive_column_name])

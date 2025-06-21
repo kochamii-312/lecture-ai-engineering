@@ -6,3 +6,7 @@ matplotlib
 seaborn
 pyngrok
 scikit-learn
+
+pymlask
+mecab-python3
+unidic
