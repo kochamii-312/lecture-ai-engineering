@@ -39,6 +39,8 @@ def get_sentiment_label(comment):
             return "neutral"
     except Exception as e:
         print(f"[ERROR] API failed for: {comment[:30]}... → {e}")
+        print(f"[DEBUG] API status: {response.status_code}")
+        print(f"[DEBUG] API text: {response.text}")
         return "neutral"
     # emotion_analyzer = MLAsk()
     # emotion_results = []
