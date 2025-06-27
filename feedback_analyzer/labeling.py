@@ -53,8 +53,9 @@ def get_sentiment_label(comment):
             imp = "negative"
         else:
             imp = imp
-    except:
-        imp = "NONE"
+    except Exception as e:
+        print(f"[DEBUG] MLAsk error: {e}")
+        return "None"
     return imp
 
 
