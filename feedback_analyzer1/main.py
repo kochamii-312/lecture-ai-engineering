@@ -1,10 +1,10 @@
 # main.py
 
-import streamlit as st
+# import streamlit as st
 import pandas as pd
 from preprocess import split_into_sentences
 from labeling import get_sentiment_label
-from clustering import Clustering
+# from clustering import Clustering
 
 def main():
 
@@ -67,26 +67,26 @@ def main():
                         negative_comment_list.append(comment_text)
                     
             st.write("分析結果:")
-            # クラスタリング
-            embedder = Clustering(hf_token=HF_TOKEN)
+            # # クラスタリング
+            # embedder = Clustering(hf_token=HF_TOKEN)
 
-            # クラスタを結合して要約
-            col1, col2 = st.columns(2)
-            with col1:
-                st.subheader("ポジティブコメントの要約")
-                clusters = embedder.cluster_comments(positive_comment_list, n_clusters=5)
-                # メモ: LLMを使わず代表コメントでも
-                for cluster_id, items in clusters.items():
-                    summary = embedder.summarize_cluster(items)
-                    st.text(f"- クラスタ {cluster_id}. {summary}")
-            with col2:
-                st.subheader("ネガティブコメントの要約")
-                clusters = embedder.cluster_comments(negative_comment_list, n_clusters=5)
-                # メモ: LLMを使わず代表コメントでも
-                for cluster_id, items in clusters.items():
-                    summary = embedder.summarize_cluster(items)
-                    st.text(f"- クラスタ {cluster_id}. {summary}")
-            st.divider()
+            # # クラスタを結合して要約
+            # col1, col2 = st.columns(2)
+            # with col1:
+            #     st.subheader("ポジティブコメントの要約")
+            #     clusters = embedder.cluster_comments(positive_comment_list, n_clusters=5)
+            #     # メモ: LLMを使わず代表コメントでも
+            #     for cluster_id, items in clusters.items():
+            #         summary = embedder.summarize_cluster(items)
+            #         st.text(f"- クラスタ {cluster_id}. {summary}")
+            # with col2:
+            #     st.subheader("ネガティブコメントの要約")
+            #     clusters = embedder.cluster_comments(negative_comment_list, n_clusters=5)
+            #     # メモ: LLMを使わず代表コメントでも
+            #     for cluster_id, items in clusters.items():
+            #         summary = embedder.summarize_cluster(items)
+            #         st.text(f"- クラスタ {cluster_id}. {summary}")
+            # st.divider()
 
             st.write("重要なコメントや危険度の高いコメントを抽出して表示します。")
             # important_comments = df[df['comments'].str.contains('重要|危険', na=False)]

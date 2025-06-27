@@ -3,4 +3,3 @@ pandas
 python-dotenv
 matplotlib
 pyngrok
-sklearn
