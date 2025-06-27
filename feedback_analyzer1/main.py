@@ -56,7 +56,8 @@ def main():
             comment_columns = ['comment3_about_teacher', 'comment4_future_suggestions', 'comment5_free']
             for col in comment_columns:
                 print(f"\nProcessing column: {col}")
-                for index, comment_text in df[col].items():
+                splited_sentences = split_into_sentences(df[col].dropna().tolist())
+                for index, comment_text in enumerate(splited_sentences):
                     sentiment = get_sentiment_label(comment_text)
                     print(f"Row {index}: '{comment_text}' -> Sentiment: {sentiment}")
                     if sentiment == 'positive':
