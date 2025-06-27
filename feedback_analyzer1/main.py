@@ -24,9 +24,6 @@ def main():
         st.write("プレビュー:")
         st.dataframe(df.head())
         
-        bytes_data = df.getvalue()
-        st.write(f"ファイルサイズ: {len(bytes_data)} bytes")
-
         # カラム名の変更
         current_columns = df.columns.tolist()
         new_column_names_part = ['comment1_positive', 'comment2_negative', 'comment3_about_teacher', 'comment4_future_suggestions', 'comment5_free']
