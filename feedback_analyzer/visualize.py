@@ -23,19 +23,21 @@ headers = {"Authorization": f"Bearer {HF_TOKEN}"}
 def show_all_visualizations(df):
     st.header("分析結果")
     st.subheader("感情分析")
-    show_sentiment_visulization(df)
+    show_sentiment_visualization(df)
     st.divider()
     st.subheader("カテゴリ別")
     show_category_visualization()
     st.divider()
     show_dangerous_comment_visualization(df)
 
-def show_sentiment_visulization(df):
+def show_sentiment_visualization(df):
     """
     「特に良かった部分」の欄のコメントと、テキスト分類器の結果をpositive_comment_listに格納、
     「分かりにくかった点や不満があった点」の欄のコメントと、テキスト分類器の結果をnegative_comment_listに格納する
     それぞれのlistをクラスタリングして要約
     """
+    global positive_comment_list, negative_comment_list
+
 
     positive_column_name = df.columns[17]
     negative_column_name = df.columns[18]

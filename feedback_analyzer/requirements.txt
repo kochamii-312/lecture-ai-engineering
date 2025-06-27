@@ -7,7 +7,7 @@ seaborn
 pyngrok
 scikit-learn
 
-mlask
+pymlask
 mecab-python3
 mecab-python3
 unidic-lite

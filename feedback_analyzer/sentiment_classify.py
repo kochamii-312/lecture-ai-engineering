@@ -62,6 +62,6 @@ class SentimentClassifier:
     
     def get_results(self):
         return {
-            "positive": positive_comment_list,
-            "negative": negative_comment_list
+            "positive": self.positive_comments,
+            "negative": self.negative_comments
         }
