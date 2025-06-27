@@ -1,10 +1,17 @@
 # main.py
 
-# import streamlit as st
+import streamlit as st
+import os
 import pandas as pd
+from dotenv import load_dotenv
 from preprocess import split_into_sentences
 from labeling import get_sentiment_label
-# from clustering import Clustering
+from clustering import Clustering
+
+load_dotenv()
+HF_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
+
+headers = {"Authorization": f"Bearer {HF_TOKEN}"}
 
 def main():
 
