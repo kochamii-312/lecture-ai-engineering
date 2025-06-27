@@ -4,7 +4,7 @@ import time
 import pandas as pd
 import MeCab
 import matplotlib.pyplot as plt
-from mlask import MLAsk
+import mlask
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -43,7 +43,7 @@ def get_sentiment_label(comment):
     #     print(f"[DEBUG] API text: {response.text}")
     #     return "neutral"
     
-    emotion_analyzer = MLAsk()
+    emotion_analyzer = mlask.MLAsk()
     try:
         analyze_result = emotion_analyzer.analyze(comment)
         imp = analyze_result['orientation']
