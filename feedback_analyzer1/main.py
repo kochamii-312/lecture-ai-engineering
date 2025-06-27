@@ -36,7 +36,8 @@ def main():
         if st.button("分析する"):
             st.write("分析中...")
 
-            global positive_comment_list, negative_comment_list
+            positive_comment_list = []
+            negative_comment_list = []
             # 'comment1_positive'カラムから要素を取得し、positive_comment_listに追加
             if 'comment1_positive' in df.columns:
                 positive_comments_from_df = df['comment1_positive'].tolist()
@@ -73,3 +74,6 @@ def main():
             st.dataframe(important_comments)
     else:
         st.info("ファイルをアップロードしてください。")
+
+if __name__ == "__main__":
+    main()
