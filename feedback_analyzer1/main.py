@@ -6,7 +6,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from preprocess import split_into_sentences
 from labeling import get_sentiment_label
-from clustering import Clustering
+from clustering import summarize_comments
 
 load_dotenv()
 HF_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
@@ -76,26 +76,18 @@ def main():
             print(f"\n positive_comment_list: {positive_comment_list}, 件数: {len(positive_comment_list)})")
             print(f"\n negative_comment_list: {negative_comment_list}, 件数: {len(negative_comment_list)})")
             st.write("分析結果:")
-            # # クラスタリング
-            # embedder = Clustering(hf_token=HF_TOKEN)
+            
+            # ポジネガの要約
+            positive_summary = summarize_comments(positive_comment_list, n_summary=10)
+            negative_summary = summarize_comments(negative_comment_list, n_summary=10)
 
-            # # クラスタを結合して要約
-            # col1, col2 = st.columns(2)
-            # with col1:
-            #     st.subheader("ポジティブコメントの要約")
-            #     clusters = embedder.cluster_comments(positive_comment_list, n_clusters=5)
-            #     # メモ: LLMを使わず代表コメントでも
-            #     for cluster_id, items in clusters.items():
-            #         summary = embedder.summarize_cluster(items)
-            #         st.text(f"- クラスタ {cluster_id}. {summary}")
-            # with col2:
-            #     st.subheader("ネガティブコメントの要約")
-            #     clusters = embedder.cluster_comments(negative_comment_list, n_clusters=5)
-            #     # メモ: LLMを使わず代表コメントでも
-            #     for cluster_id, items in clusters.items():
-            #         summary = embedder.summarize_cluster(items)
-            #         st.text(f"- クラスタ {cluster_id}. {summary}")
-            # st.divider()
+            print("【ポジティブ要約】")
+            for i, comment in enumerate(positive_summary, 1):
+                print(f"{i}. {comment}")
+
+            print("\n【ネガティブ要約】")
+            for i, comment in enumerate(negative_summary, 1):
+                print(f"{i}. {comment}")
 
             st.write("重要なコメントや危険度の高いコメントを抽出して表示します。")
             # important_comments = df[df['comments'].str.contains('重要|危険', na=False)]
