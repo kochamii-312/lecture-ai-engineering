@@ -161,8 +161,7 @@ def main():
                     'dangerous_comments': dangerous_comments,
                     'sentiment_counts': {
                         'ポジティブ': len(positive_comment_list),
-                        'ネガティブ': len(negative_comment_list),
-                        'その他': len(other_comment_list)
+                        'ネガティブ': len(negative_comment_list)
                     },
                     'category_counts': {
                         '講義内容': len(lecture_content_comment_list),
