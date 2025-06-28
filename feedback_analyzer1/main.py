@@ -17,174 +17,192 @@ headers = {"Authorization": f"Bearer {HF_TOKEN}"}
 
 def main():
 
-    st.title("松尾研講義アンケート分析アプリ")
+    st.title("📊 松尾研講義アンケート分析アプリ")
 
-    st.sidebar.header("このアプリのガイド")
-    st.sidebar.info("講義アンケートのexcelファイルをアップロードすると、重要なコメントや危険度の高いコメントを分析します。")
+    tab1, tab2, tab3, tab4 = st.tabs(["📄 アップロードと分析", "😊 センチメンタル分析", "📈 カテゴリごと", "🚨 重要度スコア"])
+    with tab1:
+        st.sidebar.header("ℹ️ このアプリのガイド")
+        st.sidebar.info("講義アンケートのexcelファイルをアップロードすると、重要なコメントや危険度の高いコメントを分析します。")
 
-    uploaded_file = st.file_uploader("excelファイルをアップロードしてください", type=["xlsx", "xls"], key="excel_upload") # key引数で明示的に識別子を指定
-    if uploaded_file:
-        if uploaded_file.name.endswith('.xlsx') or uploaded_file.name.endswith('.xls'):
-            df = pd.read_excel(uploaded_file)    
-        elif uploaded_file.name.endswith('.csv'):
-            df = pd.read_csv(uploaded_file)
-        else:
-            st.error("サポートされていないファイル形式です。ExcelまたはCSVファイルをアップロードしてください。")
+        pos_limit = st.slider("表示するポジティブコメント数", 1, 20, 10)
+        neg_limit = st.slider("表示するネガティブコメント数", 1, 20, 10)
+        cat_limit = st.slider("カテゴリごとの表示数", 1, 20, 10)
         
-        st.write("プレビュー:")
-        st.dataframe(df.head())
-        
-        # カラム名の変更
-        current_columns = df.columns.tolist()
-        new_column_names_part = ['comment1_positive', 'comment2_negative', 'comment3_about_teacher', 'comment4_future_suggestions', 'comment5_free']
-        current_columns[16:21] = new_column_names_part
-        df.columns = current_columns
-
-        if st.button("分析する"):
-            st.write("分析中...")
-
-            positive_comment_list = []
-            negative_comment_list = []
-            
-            lecture_content_comment_list = []
-            lecture_materials_comment_list = []
-            operation_comment_list = []
-            others_comment_list = []
-            
-            # 'comment1_positive'カラムから要素を取得し、positive_comment_listに追加
-            if 'comment1_positive' in df.columns:
-                positive_comments_from_df = df['comment1_positive'].tolist()
-                positive_comment_list.extend(split_into_sentences(positive_comments_from_df))
-                print("\n positive_comment_list:")
-                print(positive_comment_list)
+        uploaded_file = st.file_uploader("excelファイルをアップロードしてください", type=["xlsx", "xls"], key="excel_upload") # key引数で明示的に識別子を指定
+        if uploaded_file:
+            if uploaded_file.name.endswith('.xlsx') or uploaded_file.name.endswith('.xls'):
+                df = pd.read_excel(uploaded_file)    
+            elif uploaded_file.name.endswith('.csv'):
+                df = pd.read_csv(uploaded_file)
             else:
-                print("\n'comment1_positive' column not found in the DataFrame.")
-            # 'comment2_negative'カラムから要素を取得し、negative_comment_listに追加
-            if 'comment2_negative' in df.columns:
-                negative_comments_from_df = df['comment2_negative'].tolist()
-                positive_comment_list.extend(split_into_sentences(negative_comments_from_df))
-                print("\n negative_comment_list:")
-                print(negative_comment_list)
-            else:
-                print("\n'comment2_negative' column not found in the DataFrame.")
+                st.error("❌ サポートされていないファイル形式です。ExcelまたはCSVファイルをアップロードしてください。")
             
-            # 残りのカラムの感情分類
-            comment_columns = ['comment3_about_teacher', 'comment4_future_suggestions', 'comment5_free']
-            for col in comment_columns:
-                print(f"\nProcessing column: {col}")
-                splited_sentences = split_into_sentences(df[col].dropna().tolist())
-                for index, comment_text in enumerate(splited_sentences):
-                    sentiment = get_sentiment_label(comment_text)
-                    print(f"Row {index}: '{comment_text}' -> Sentiment: {sentiment}")
-                    if sentiment == 'positive':
-                        positive_comment_list.append(comment_text)
-                    elif sentiment == 'negative':
-                        negative_comment_list.append(comment_text)
+            st.write("👀 プレビュー:")
+            st.dataframe(df.head())
             
-            print(f"\n positive_comment_list: {positive_comment_list}, 件数: {len(positive_comment_list)})")
-            print(f"\n negative_comment_list: {negative_comment_list}, 件数: {len(negative_comment_list)})")
+            # カラム名の変更
+            current_columns = df.columns.tolist()
+            new_column_names_part = ['comment1_positive', 'comment2_negative', 'comment3_about_teacher', 'comment4_future_suggestions', 'comment5_free']
+            current_columns[16:21] = new_column_names_part
+            df.columns = current_columns
+
+            if st.button("🚀 分析する"):
+                progress = st.progress(0, text="分析を開始しています...")
+                positive_comment_list = []
+                negative_comment_list = []
+                
+                lecture_content_comment_list = []
+                lecture_materials_comment_list = []
+                operation_comment_list = []
+                others_comment_list = []
+                comment_columns_all = new_column_names_part
+                
+                progress.progress(10, "コメントを分割・感情分析中...")
+                # 'comment1_positive'カラムから要素を取得し、positive_comment_listに追加
+                if 'comment1_positive' in df.columns:
+                    positive_comments_from_df = df['comment1_positive'].tolist()
+                    positive_comment_list.extend(split_into_sentences(positive_comments_from_df))
+                    print("\n positive_comment_list:")
+                    print(positive_comment_list)
+                else:
+                    print("\n'comment1_positive' column not found in the DataFrame.")
+                # 'comment2_negative'カラムから要素を取得し、negative_comment_listに追加
+                if 'comment2_negative' in df.columns:
+                    negative_comments_from_df = df['comment2_negative'].tolist()
+                    positive_comment_list.extend(split_into_sentences(negative_comments_from_df))
+                    print("\n negative_comment_list:")
+                    print(negative_comment_list)
+                else:
+                    print("\n'comment2_negative' column not found in the DataFrame.")
+                
+                # 残りのカラムの感情分類
+                comment_columns = ['comment3_about_teacher', 'comment4_future_suggestions', 'comment5_free']
+                for col in comment_columns:
+                    print(f"\nProcessing column: {col}")
+                    splited_sentences = split_into_sentences(df[col].dropna().tolist())
+                    for index, comment_text in enumerate(splited_sentences):
+                        sentiment = get_sentiment_label(comment_text)
+                        print(f"Row {index}: '{comment_text}' -> Sentiment: {sentiment}")
+                        if sentiment == 'positive':
+                            positive_comment_list.append(comment_text)
+                        elif sentiment == 'negative':
+                            negative_comment_list.append(comment_text)
+                
+                print(f"\n positive_comment_list: {positive_comment_list}, 件数: {len(positive_comment_list)})")
+                print(f"\n negative_comment_list: {negative_comment_list}, 件数: {len(negative_comment_list)})")
+                
+                # カテゴリ分類
+                progress.progress(30, "カテゴリ分類中...")
+                for col in comment_columns_all:
+                    print(f"\nProcessing column: {col}")
+                    splited_sentences = split_into_sentences(df[col].dropna().tolist())
+                    for index, comment_text in enumerate(splited_sentences):
+                        category = get_category_label(comment_text)
+                        print(f"Row {index}: '{comment_text}' -> Category: {category}")
+                        if category == '講義内容':
+                            lecture_content_comment_list.append(comment_text)
+                        elif category == '講義資料':
+                            lecture_materials_comment_list.append(comment_text)
+                        elif category == '運営':
+                            operation_comment_list.append(comment_text)
+                        else:
+                            others_comment_list.append(comment_text)
+                print(f"\n lecture_content_comment_list: {lecture_content_comment_list}, 件数: {len(lecture_content_comment_list)})")
+                print(f"\n lecture_materials_comment_list: {lecture_materials_comment_list}, 件数: {len(lecture_materials_comment_list)})")
+                print(f"\n operation_comment_list: {operation_comment_list}, 件数: {len(operation_comment_list)})")
+                print(f"\n others_comment_list: {others_comment_list}, 件数: {len(others_comment_list)})")
+                
+                # 重要スコア
+                progress.progress(60, "重要度スコア計算中...")
+                scored_comments_all = []
+
+                for col in comment_columns_all:
+                    comments = df[col].dropna().tolist()
+                    splited_sentences = split_into_sentences(comments)
+                    clustered = cluster_comments(splited_sentences)
+                    for index, comment_text in enumerate(splited_sentences):
+                        spec = score_specificity(comment_text)
+                        urg = score_urgency(comment_text)
+                        cluster_number = get_cluster_number(comment_text, clustered)
+                        cluster_size, total_comments = get_cluster_size_and_total(cluster_number, clustered)
+                        comm = score_commonality(cluster_size, total_comments)
+                        importance_score = score_importance(spec, urg, comm)
+
+                        print(f"Row {index}: '{comment_text}' -> Specificity: {spec}, Urgency: {urg}, Commonality: {comm}, Importance Score: {importance_score}")
+
+                        # 辞書形式でまとめてリストに追加
+                        scored_comments_all.append({
+                            "comment": comment_text,
+                            "specificity": spec,
+                            "urgency": urg,
+                            "commonality": comm,
+                            "importance_score": importance_score,
+                            "cluster": cluster_number
+                        })
+
+                progress.progress(90, "危険コメントを抽出中...")
+                all_comments = sum([split_into_sentences(df[col].dropna().tolist()) for col in comment_columns_all], [])
+                dangerous_comments = extract_dangerous_comments(all_comments)
+
+                progress.progress(100, "分析完了！")
+                st.success("🎉 分析が完了しました。各タブを確認してください。")
             
-            # カテゴリ分類
-            comment_columns_all = ['comment1_positive', 'comment2_negative', 'comment3_about_teacher', 'comment4_future_suggestions', 'comment5_free']
-            for col in comment_columns_all:
-                print(f"\nProcessing column: {col}")
-                splited_sentences = split_into_sentences(df[col].dropna().tolist())
-                for index, comment_text in enumerate(splited_sentences):
-                    category = get_category_label(comment_text)
-                    print(f"Row {index}: '{comment_text}' -> Category: {category}")
-                    if category == '講義内容':
-                        lecture_content_comment_list.append(comment_text)
-                    elif category == '講義資料':
-                        lecture_materials_comment_list.append(comment_text)
-                    elif category == '運営':
-                        operation_comment_list.append(comment_text)
-                    else:
-                        others_comment_list.append(comment_text)
-            print(f"\n lecture_content_comment_list: {lecture_content_comment_list}, 件数: {len(lecture_content_comment_list)})")
-            print(f"\n lecture_materials_comment_list: {lecture_materials_comment_list}, 件数: {len(lecture_materials_comment_list)})")
-            print(f"\n operation_comment_list: {operation_comment_list}, 件数: {len(operation_comment_list)})")
-            print(f"\n others_comment_list: {others_comment_list}, 件数: {len(others_comment_list)})")
-            
-            # 重要スコア
-            scored_comments_all = []
-
-            for col in comment_columns_all:
-                comments = df[col].dropna().tolist()
-                splited_sentences = split_into_sentences(comments)
-                clustered = cluster_comments(splited_sentences)
-                for index, comment_text in enumerate(splited_sentences):
-                    spec = score_specificity(comment_text)
-                    urg = score_urgency(comment_text)
-                    cluster_number = get_cluster_number(comment_text, clustered)
-                    cluster_size, total_comments = get_cluster_size_and_total(cluster_number, clustered)
-                    comm = score_commonality(cluster_size, total_comments)
-                    importance_score = score_importance(spec, urg, comm)
-
-                    print(f"Row {index}: '{comment_text}' -> Specificity: {spec}, Urgency: {urg}, Commonality: {comm}, Importance Score: {importance_score}")
-
-                    # 辞書形式でまとめてリストに追加
-                    scored_comments_all.append({
-                        "comment": comment_text,
-                        "specificity": spec,
-                        "urgency": urg,
-                        "commonality": comm,
-                        "importance_score": importance_score,
-                        "cluster": cluster_number
-                    })
-
-            st.write("重要なコメントや危険度の高いコメントを抽出して表示します。")
-
-            st.write("分析結果:")
-            
+    if 'positive_summary' in st.session_state:
+        with tab2:
             # ポジネガの要約
-            positive_summary = summarize_comments(positive_comment_list, n_summary=10)
-            negative_summary = summarize_comments(negative_comment_list, n_summary=10)
+            positive_summary = summarize_comments(positive_comment_list, n_summary=pos_limit)
+            negative_summary = summarize_comments(negative_comment_list, n_summary=neg_limit)
 
-            st.subheader("【ポジティブ要約】")
+            st.subheader("✅ ポジティブコメント要約")
             for i, comment in enumerate(positive_summary, 1):
                 st.write(f"{i}. {comment}")
 
-            st.subheader("【ネガティブ要約】")
+            st.subheader("⚠️ ネガティブコメント要約")
             for i, comment in enumerate(negative_summary, 1):
                 st.write(f"{i}. {comment}")
 
+        with tab3:
             # カテゴリごとの要約
-            lecture_content_summary = summarize_comments(lecture_content_comment_list, n_summary=10)
-            lecture_materials_summary = summarize_comments(lecture_materials_comment_list, n_summary=10)
-            operation_summary = summarize_comments(operation_comment_list, n_summary=10)
-            others_summary = summarize_comments(others_comment_list, n_summary=10)
-            st.subheader("【講義内容に対するコメントの要約】")
+            lecture_content_summary = summarize_comments(lecture_content_comment_list, n_summary=cat_limit)
+            lecture_materials_summary = summarize_comments(lecture_materials_comment_list, n_summary=cat_limit)
+            operation_summary = summarize_comments(operation_comment_list, n_summary=cat_limit)
+            others_summary = summarize_comments(others_comment_list, n_summary=cat_limit)
+            st.subheader("📘 講義内容に関するコメント")
             for i, comment in enumerate(lecture_content_summary, 1):
                 st.write(f"{i}. {comment}")
-            st.subheader("【講義資料に対するコメントの要約】")
+            st.subheader("📗 講義資料に関するコメント")
             for i, comment in enumerate(lecture_materials_summary, 1):
                 st.write(f"{i}. {comment}")
-            st.subheader("【運営に対するコメントの要約】")
+            st.subheader("📙 運営に関するコメント")
             for i, comment in enumerate(operation_summary, 1):
                 st.write(f"{i}. {comment}")
 
+        with tab4:
             #重要度スコア上位10件
             scored_comments_df = pd.DataFrame(scored_comments_all)
             scored_comments_df = scored_comments_df.sort_values(by='importance_score', ascending=False)
-            st.subheader("【重要度スコア上位10件】")
+            st.subheader("🏆 重要度スコア上位コメント")
             top_10_comments = scored_comments_df.head(10)
-            for index, row in top_10_comments.iterrows():
-                st.write(f"コメント: {row['comment']}")
-                st.write(f"具体性スコア: {row['specificity']}, 緊急性スコア: {row['urgency']}, 共通性スコア: {row['commonality']}, 重要度スコア: {row['importance_score']}, クラスタ番号: {row['cluster']}")
-                st.write("---")
+            for _, row in top_10_comments.iterrows():
+                with st.expander(row['comment'][:40] + "..."):
+                    st.write(f"コメント全文: {row['comment']}")
+                    st.markdown(f"- 具体性: {row['specificity']}")
+                    st.markdown(f"- 緊急性: {row['urgency']}")
+                    st.markdown(f"- 共通性: {row['commonality']}")
+                    st.markdown(f"- クラスタ番号: {row['cluster']}")
+
             
             # 危険コメントの抽出
-            st.subheader("【危険コメントの抽出】")
+            st.subheader("🚨 危険コメント")
             for col in comment_columns_all:
                 comments = df[col].dropna().tolist()
                 splited_sentences = split_into_sentences(comments)
                 dangerous_comment = extract_dangerous_comments(splited_sentences)
             if dangerous_comment:
-                st.write("危険コメント:")
                 for i, comment in enumerate(dangerous_comment, 1):
                     st.write(f"{i}. {comment}")
-    else:
-        st.info("ファイルをアップロードしてください。")
+            else:
+                st.info("危険コメントは見つかりませんでした。")
 
 if __name__ == "__main__":
     main()
