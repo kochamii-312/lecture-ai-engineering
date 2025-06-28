@@ -4,6 +4,16 @@ from sklearn.cluster import KMeans
 from sentence_transformers import SentenceTransformer
 
 def summarize_comments(comment_list, n_summary=10):
+    """
+    コメントリストをクラスタリングして要約を生成する
+
+    Parameters:
+        comment_list (List[str]): 文字列のコメントリスト
+        n_summary (int): 要約の件数
+    
+    Returns:
+        List[str]: 要約されたコメントリスト
+    """
     if len(comment_list) <= n_summary:
         return comment_list  # コメントが少なければそのまま返す
 
@@ -26,7 +36,7 @@ def summarize_comments(comment_list, n_summary=10):
 
 def cluster_comments(comment_list, num_clusters=5):
     """
-    コメントリストをクラスタリングし、クラスタ番号付きで返す関数
+    コメントリストをクラスタリングし、クラスタ番号付きで返す
     
     Parameters:
         comment_list (List[str]): 文字列のコメントリスト

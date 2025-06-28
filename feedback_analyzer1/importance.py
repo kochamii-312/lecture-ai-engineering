@@ -12,7 +12,7 @@ def score_specificity(comment):
     return min(score, 1.0)
 
 def score_urgency(comment):
-    urgency_words = ['わからない', '困る', '早急', '改善', 'すぐに', '対処', '不明', '曖昧']
+    urgency_words = ['いただけるとありがたい', '期待します', 'わからない', '困る', '早急', '改善', 'すぐに', '対処', '不明', '曖昧']
     count = sum(word in comment for word in urgency_words)
     return min(count * 0.2, 1.0)
 

@@ -8,6 +8,7 @@ from preprocess import split_into_sentences
 from labeling import get_sentiment_label, get_category_label
 from clustering import summarize_comments, cluster_comments
 from importance import score_specificity, score_urgency, score_commonality, score_importance, get_cluster_number, get_cluster_size_and_total
+from danger import extract_dangerous_comments
 
 load_dotenv()
 HF_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
@@ -132,8 +133,7 @@ def main():
                     })
 
             st.write("重要なコメントや危険度の高いコメントを抽出して表示します。")
-            # important_comments = df[df['comments'].str.contains('重要|危険', na=False)]
-            # st.dataframe(important_comments)
+
             st.write("分析結果:")
             
             # ポジネガの要約
@@ -162,11 +162,27 @@ def main():
             st.subheader("【運営に対するコメントの要約】")
             for i, comment in enumerate(operation_summary, 1):
                 st.write(f"{i}. {comment}")
-            st.subheader("【その他のコメントの要約】")
-            for i, comment in enumerate(others_summary, 1):
-                st.write(f"{i}. {comment}")
+
+            #重要度スコア上位10件
+            scored_comments_df = pd.DataFrame(scored_comments_all)
+            scored_comments_df = scored_comments_df.sort_values(by='importance_score', ascending=False)
+            st.subheader("【重要度スコア上位10件】")
+            top_10_comments = scored_comments_df.head(10)
+            for index, row in top_10_comments.iterrows():
+                st.write(f"コメント: {row['comment']}")
+                st.write(f"具体性スコア: {row['specificity']}, 緊急性スコア: {row['urgency']}, 共通性スコア: {row['commonality']}, 重要度スコア: {row['importance_score']}, クラスタ番号: {row['cluster']}")
+                st.write("---")
             
-            
+            # 危険コメントの抽出
+            st.subheader("【危険コメントの抽出】")
+            for col in comment_columns_all:
+                comments = df[col].dropna().tolist()
+                splited_sentences = split_into_sentences(comments)
+                dangerous_comment = extract_dangerous_comments(splited_sentences)
+            if dangerous_comment:
+                st.write("危険コメント:")
+                for i, comment in enumerate(dangerous_comment, 1):
+                    st.write(f"{i}. {comment}")
     else:
         st.info("ファイルをアップロードしてください。")
 
