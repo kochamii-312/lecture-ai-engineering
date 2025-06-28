@@ -4,12 +4,15 @@ import streamlit as st
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
 from dotenv import load_dotenv
 from preprocess import split_into_sentences
 from labeling import get_sentiment_label, get_category_label
 from clustering import summarize_comments, cluster_comments
 from importance import score_specificity, score_urgency, score_commonality, score_importance, get_cluster_number, get_cluster_size_and_total
 from danger import extract_dangerous_comments
+
+matplotlib.rcParams['font.family'] = 'IPAexGothic'
 
 load_dotenv()
 HF_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
@@ -221,7 +224,7 @@ def main():
                     st.markdown(f"- 具体性: {row['specificity']} / 1.0")
                     st.markdown(f"- 緊急性: {row['urgency']} / 1.0")
                     st.markdown(f"- 共通性: {row['commonality']} / 1.0")
-                    st.markdown(f"- 重要度スコア: {row['importance_score']} / 1.0")
+                    st.markdown(f"- 重要度スコア: {row['importance_score']} / 10")
 
             st.subheader("📈 重要度スコア分布")
             fig3, ax3 = plt.subplots()
