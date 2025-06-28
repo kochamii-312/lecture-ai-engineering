@@ -17,7 +17,7 @@ headers = {"Authorization": f"Bearer {HF_TOKEN}"}
 
 def main():
 
-    st.title("📊 松尾研講義アンケート分析アプリ")
+    st.title("📊 講義アンケート分析アプリ")
 
     tab1, tab2, tab3, tab4 = st.tabs(["📄 アップロードと分析", "😊 センチメンタル分析", "📈 カテゴリごと", "🚨 重要度スコア"])
     with tab1:
@@ -146,6 +146,19 @@ def main():
 
                 progress.progress(100, "分析完了！")
                 st.success("🎉 分析が完了しました。各タブを確認してください。")
+                st.balloons()
+
+                # 分析結果をセッションに保存
+                st.session_state.update({
+                    'positive_summary': summarize_comments(positive_comment_list, pos_limit),
+                    'negative_summary': summarize_comments(negative_comment_list, neg_limit),
+                    'lecture_content_summary': summarize_comments(lecture_content_comment_list, cat_limit),
+                    'lecture_materials_summary': summarize_comments(lecture_materials_comment_list, cat_limit),
+                    'operation_summary': summarize_comments(operation_comment_list, cat_limit),
+                    'others_summary': summarize_comments(others_comment_list, cat_limit),
+                    'scored_comments_df': pd.DataFrame(scored_comments_all).sort_values(by='importance_score', ascending=False),
+                    'dangerous_comments': dangerous_comments
+                })
             
     if 'positive_summary' in st.session_state:
         with tab2:
