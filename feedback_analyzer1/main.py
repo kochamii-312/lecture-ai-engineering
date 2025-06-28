@@ -6,7 +6,8 @@ import pandas as pd
 from dotenv import load_dotenv
 from preprocess import split_into_sentences
 from labeling import get_sentiment_label, get_category_label
-from clustering import summarize_comments
+from clustering import summarize_comments, cluster_comments
+from importance import score_specificity, score_urgency, score_commonality, score_importance, get_cluster_number, get_cluster_size_and_total
 
 load_dotenv()
 HF_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
@@ -82,7 +83,9 @@ def main():
             print(f"\n positive_comment_list: {positive_comment_list}, 件数: {len(positive_comment_list)})")
             print(f"\n negative_comment_list: {negative_comment_list}, 件数: {len(negative_comment_list)})")
             
-            for col in comment_columns:
+            # カテゴリ分類
+            comment_columns_all = ['comment1_positive', 'comment2_negative', 'comment3_about_teacher', 'comment4_future_suggestions', 'comment5_free']
+            for col in comment_columns_all:
                 print(f"\nProcessing column: {col}")
                 splited_sentences = split_into_sentences(df[col].dropna().tolist())
                 for index, comment_text in enumerate(splited_sentences):
@@ -101,6 +104,36 @@ def main():
             print(f"\n operation_comment_list: {operation_comment_list}, 件数: {len(operation_comment_list)})")
             print(f"\n others_comment_list: {others_comment_list}, 件数: {len(others_comment_list)})")
             
+            # 重要スコア
+            scored_comments_all = []
+
+            for col in comment_columns_all:
+                comments = df[col].dropna().tolist()
+                splited_sentences = split_into_sentences(comments)
+                clustered = cluster_comments(splited_sentences)
+                for index, comment_text in enumerate(splited_sentences):
+                    spec = score_specificity(comment_text)
+                    urg = score_urgency(comment_text)
+                    cluster_number = get_cluster_number(comment_text, clustered)
+                    cluster_size, total_comments = get_cluster_size_and_total(cluster_number, clustered)
+                    comm = score_commonality(cluster_size, total_comments)
+                    importance_score = score_importance(spec, urg, comm)
+
+                    print(f"Row {index}: '{comment_text}' -> Specificity: {spec}, Urgency: {urg}, Commonality: {comm}, Importance Score: {importance_score}")
+
+                    # 辞書形式でまとめてリストに追加
+                    scored_comments_all.append({
+                        "comment": comment_text,
+                        "specificity": spec,
+                        "urgency": urg,
+                        "commonality": comm,
+                        "importance_score": importance_score,
+                        "cluster": cluster_number
+                    })
+
+            st.write("重要なコメントや危険度の高いコメントを抽出して表示します。")
+            # important_comments = df[df['comments'].str.contains('重要|危険', na=False)]
+            # st.dataframe(important_comments)
             st.write("分析結果:")
             
             # ポジネガの要約
@@ -115,9 +148,25 @@ def main():
             for i, comment in enumerate(negative_summary, 1):
                 st.write(f"{i}. {comment}")
 
-            st.write("重要なコメントや危険度の高いコメントを抽出して表示します。")
-            # important_comments = df[df['comments'].str.contains('重要|危険', na=False)]
-            # st.dataframe(important_comments)
+            # カテゴリごとの要約
+            lecture_content_summary = summarize_comments(lecture_content_comment_list, n_summary=10)
+            lecture_materials_summary = summarize_comments(lecture_materials_comment_list, n_summary=10)
+            operation_summary = summarize_comments(operation_comment_list, n_summary=10)
+            others_summary = summarize_comments(others_comment_list, n_summary=10)
+            st.subheader("【講義内容に対するコメントの要約】")
+            for i, comment in enumerate(lecture_content_summary, 1):
+                st.write(f"{i}. {comment}")
+            st.subheader("【講義資料に対するコメントの要約】")
+            for i, comment in enumerate(lecture_materials_summary, 1):
+                st.write(f"{i}. {comment}")
+            st.subheader("【運営に対するコメントの要約】")
+            for i, comment in enumerate(operation_summary, 1):
+                st.write(f"{i}. {comment}")
+            st.subheader("【その他のコメントの要約】")
+            for i, comment in enumerate(others_summary, 1):
+                st.write(f"{i}. {comment}")
+            
+            
     else:
         st.info("ファイルをアップロードしてください。")
 
