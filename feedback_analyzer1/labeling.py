@@ -42,3 +42,15 @@ def get_sentiment_label(comment):
 
     return 'neutral'
 
+def get_category_label(comment):
+    rules = {
+        "講義内容": ["内容", "説明", "理解", "わかりやすい", "話", "テーマ", "授業"],
+        "講義資料": ["スライド", "資料", "図", "文字", "配布", "見え", "小さい"],
+        "運営": ["時間", "遅刻", "トラブル", "Zoom", "案内", "会場", "運営", "サポート"],
+    }
+
+    for category, keywords in rules.items():
+        for word in keywords:
+            if word in comment:
+                return category
+    return "その他"
