@@ -3,6 +3,7 @@
 import streamlit as st
 import os
 import pandas as pd
+import matplotlib.pyplot as plt
 from dotenv import load_dotenv
 from preprocess import split_into_sentences
 from labeling import get_sentiment_label, get_category_label
@@ -163,40 +164,47 @@ def main():
     if 'positive_summary' in st.session_state:
         with tab2:
             # ポジネガの要約
-            positive_summary = summarize_comments(positive_comment_list, n_summary=pos_limit)
-            negative_summary = summarize_comments(negative_comment_list, n_summary=neg_limit)
-
             st.subheader("✅ ポジティブコメント要約")
-            for i, comment in enumerate(positive_summary, 1):
+            for i, comment in enumerate(st.session_state['positive_summary'], 1):
                 st.write(f"{i}. {comment}")
 
             st.subheader("⚠️ ネガティブコメント要約")
-            for i, comment in enumerate(negative_summary, 1):
+            for i, comment in enumerate(st.session_state['negative_summary'], 1):
                 st.write(f"{i}. {comment}")
+
+            st.subheader("📊 感情分布（円グラフ）")
+            fig, ax = plt.subplots()
+            labels = list(st.session_state['sentiment_counts'].keys())
+            sizes = list(st.session_state['sentiment_counts'].values())
+            ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
+            ax.axis('equal')
+            st.pyplot(fig)
 
         with tab3:
             # カテゴリごとの要約
-            lecture_content_summary = summarize_comments(lecture_content_comment_list, n_summary=cat_limit)
-            lecture_materials_summary = summarize_comments(lecture_materials_comment_list, n_summary=cat_limit)
-            operation_summary = summarize_comments(operation_comment_list, n_summary=cat_limit)
-            others_summary = summarize_comments(others_comment_list, n_summary=cat_limit)
             st.subheader("📘 講義内容に関するコメント")
-            for i, comment in enumerate(lecture_content_summary, 1):
+            for i, comment in enumerate(st.session_state['lecture_content_summary'], 1):
                 st.write(f"{i}. {comment}")
             st.subheader("📗 講義資料に関するコメント")
-            for i, comment in enumerate(lecture_materials_summary, 1):
+            for i, comment in enumerate(st.session_state['lecture_materials_summary'], 1):
                 st.write(f"{i}. {comment}")
             st.subheader("📙 運営に関するコメント")
-            for i, comment in enumerate(operation_summary, 1):
+            for i, comment in enumerate(st.session_state['operation_summary'], 1):
                 st.write(f"{i}. {comment}")
+
+            st.subheader("📊 カテゴリ分布（円グラフ）")
+            fig2, ax2 = plt.subplots()
+            labels = list(st.session_state['category_counts'].keys())
+            sizes = list(st.session_state['category_counts'].values())
+            ax2.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
+            ax2.axis('equal')
+            st.pyplot(fig2)
 
         with tab4:
             #重要度スコア上位10件
-            scored_comments_df = pd.DataFrame(scored_comments_all)
-            scored_comments_df = scored_comments_df.sort_values(by='importance_score', ascending=False)
             st.subheader("🏆 重要度スコア上位コメント")
-            top_10_comments = scored_comments_df.head(10)
-            for _, row in top_10_comments.iterrows():
+            top_10 = st.session_state['scored_comments_df'].head(10)
+            for _, row in top_10.iterrows():
                 with st.expander(row['comment'][:40] + "..."):
                     st.write(f"コメント全文: {row['comment']}")
                     st.markdown(f"- 具体性: {row['specificity']}")
@@ -204,15 +212,17 @@ def main():
                     st.markdown(f"- 共通性: {row['commonality']}")
                     st.markdown(f"- クラスタ番号: {row['cluster']}")
 
+            st.subheader("📈 重要度スコア分布")
+            fig3, ax3 = plt.subplots()
+            st.session_state['scored_comments_df']['importance_score'].hist(bins=20, ax=ax3)
+            ax3.set_xlabel("重要度スコア")
+            ax3.set_ylabel("件数")
+            st.pyplot(fig3)
             
             # 危険コメントの抽出
             st.subheader("🚨 危険コメント")
-            for col in comment_columns_all:
-                comments = df[col].dropna().tolist()
-                splited_sentences = split_into_sentences(comments)
-                dangerous_comment = extract_dangerous_comments(splited_sentences)
-            if dangerous_comment:
-                for i, comment in enumerate(dangerous_comment, 1):
+            if st.session_state['dangerous_comments']:
+                for i, comment in enumerate(st.session_state['dangerous_comments'], 1):
                     st.write(f"{i}. {comment}")
             else:
                 st.info("危険コメントは見つかりませんでした。")
