@@ -207,10 +207,10 @@ def main():
             for _, row in top_10.iterrows():
                 with st.expander(row['comment'][:40] + "..."):
                     st.write(f"コメント全文: {row['comment']}")
-                    st.markdown(f"- 具体性: {row['specificity']}")
-                    st.markdown(f"- 緊急性: {row['urgency']}")
-                    st.markdown(f"- 共通性: {row['commonality']}")
-                    st.markdown(f"- クラスタ番号: {row['cluster']}")
+                    st.markdown(f"- 具体性: {row['specificity']} / 1.0")
+                    st.markdown(f"- 緊急性: {row['urgency']} / 1.0")
+                    st.markdown(f"- 共通性: {row['commonality']} / 1.0")
+                    st.markdown(f"- 重要度スコア: {row['importance_score']} / 1.0")
 
             st.subheader("📈 重要度スコア分布")
             fig3, ax3 = plt.subplots()
