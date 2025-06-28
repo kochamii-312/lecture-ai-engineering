@@ -158,8 +158,20 @@ def main():
                     'operation_summary': summarize_comments(operation_comment_list, cat_limit),
                     'others_summary': summarize_comments(others_comment_list, cat_limit),
                     'scored_comments_df': pd.DataFrame(scored_comments_all).sort_values(by='importance_score', ascending=False),
-                    'dangerous_comments': dangerous_comments
+                    'dangerous_comments': dangerous_comments,
+                    'sentiment_counts': {
+                        'ポジティブ': len(positive_comment_list),
+                        'ネガティブ': len(negative_comment_list),
+                        'その他': len(other_comment_list)
+                    },
+                    'category_counts': {
+                        '講義内容': len(lecture_content_comment_list),
+                        '講義資料': len(lecture_materials_comment_list),
+                        '運営': len(operation_comment_list),
+                        'その他': len(others_comment_list)
+                    }
                 })
+
             
     if 'positive_summary' in st.session_state:
         with tab2:
