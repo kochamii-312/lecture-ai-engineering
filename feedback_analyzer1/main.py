@@ -1,10 +1,12 @@
 # main.py
 
+import matplotlib.font_manager
 import streamlit as st
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
+import japanize_matplotlib
 from dotenv import load_dotenv
 from preprocess import split_into_sentences
 from labeling import get_sentiment_label, get_category_label
@@ -12,7 +14,8 @@ from clustering import summarize_comments, cluster_comments
 from importance import score_specificity, score_urgency, score_commonality, score_importance, get_cluster_number, get_cluster_size_and_total
 from danger import extract_dangerous_comments
 
-matplotlib.rcParams['font.family'] = 'IPAexGothic'
+matplotlib.font_manager._rebuild()
+# matplotlib.rcParams['font.family'] = 'IPAexGothic'
 
 load_dotenv()
 HF_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
@@ -187,19 +190,13 @@ def main():
                 st.write(f"{i}. {comment}")
 
             st.subheader("📊 感情分布（円グラフ）")
-            fig, ax = plt.subplots()
+            # fig, ax = plt.subplots()
             labels = list(st.session_state['sentiment_counts'].keys())
             sizes = list(st.session_state['sentiment_counts'].values())
-            # 円グラフ（ラベルは使わない）
-            wedges, _, _ = ax.pie(sizes, autopct='%1.1f%%', startangle=90)
-
-            # 凡例を別で描画し、フォントを指定
-            ax.legend(wedges, labels, title="感情", loc="center left", bbox_to_anchor=(1, 0, 0.5, 1), prop={'family': 'IPAexGothic'})
-
-            ax.axis('equal')
-            # タイトルを追加（日本語フォント指定）
-            plt.title('カテゴリ分布（円グラフ）', fontname='IPAexGothic')
-            st.pyplot(fig)
+            plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
+            plt.show()
+            # ax.axis('equal')
+            # st.pyplot(fig)
 
         with tab3:
             # カテゴリごとの要約
