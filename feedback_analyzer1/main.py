@@ -190,8 +190,15 @@ def main():
             fig, ax = plt.subplots()
             labels = list(st.session_state['sentiment_counts'].keys())
             sizes = list(st.session_state['sentiment_counts'].values())
-            ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
+            # 円グラフ（ラベルは使わない）
+            wedges, _, _ = ax.pie(sizes, autopct='%1.1f%%', startangle=90)
+
+            # 凡例を別で描画し、フォントを指定
+            ax.legend(wedges, labels, title="感情", loc="center left", bbox_to_anchor=(1, 0, 0.5, 1), prop={'family': 'IPAexGothic'})
+
             ax.axis('equal')
+            # タイトルを追加（日本語フォント指定）
+            plt.title('カテゴリ分布（円グラフ）', fontname='IPAexGothic')
             st.pyplot(fig)
 
         with tab3:
