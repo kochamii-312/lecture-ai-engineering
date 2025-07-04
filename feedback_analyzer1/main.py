@@ -62,6 +62,7 @@ def main():
                 progress = st.progress(0, text="分析を開始しています...")
                 positive_comment_list = []
                 negative_comment_list = []
+                neutral_comment_list = []
                 
                 lecture_content_comment_list = []
                 lecture_materials_comment_list = []
@@ -99,6 +100,8 @@ def main():
                             positive_comment_list.append(comment_text)
                         elif sentiment == 'negative':
                             negative_comment_list.append(comment_text)
+                        else:
+                            neutral_comment_list.append(comment_text)
                 
                 print(f"\n positive_comment_list: {positive_comment_list}, 件数: {len(positive_comment_list)})")
                 print(f"\n negative_comment_list: {negative_comment_list}, 件数: {len(negative_comment_list)})")
@@ -172,7 +175,8 @@ def main():
                     'dangerous_comments': dangerous_comments,
                     'sentiment_counts': {
                         'ポジティブ': len(positive_comment_list),
-                        'ネガティブ': len(negative_comment_list)
+                        'ネガティブ': len(negative_comment_list),
+                        'ニュートラル': len(neutral_comment_list)
                     },
                     'category_counts': {
                         '講義内容': len(lecture_content_comment_list),
