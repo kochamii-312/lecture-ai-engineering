@@ -229,7 +229,7 @@ def main():
                     st.markdown(f"- 具体性: {row['specificity']} / 1.0")
                     st.markdown(f"- 緊急性: {row['urgency']} / 1.0")
                     st.markdown(f"- 共通性: {row['commonality']:.2f} / 1.0")
-                    st.markdown(f'<p class="big-font">- 重要度スコア: {row['importance_score']} / 10</p>', unsafe_allow_html=True)
+                    st.markdown(f"重要度スコア: {row['importance_score']} / 10", unsafe_allow_html=True)
                     
             st.subheader("📈 重要度スコア分布")
             fig3, ax3 = plt.subplots()
