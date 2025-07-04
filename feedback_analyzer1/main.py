@@ -190,13 +190,12 @@ def main():
                 st.write(f"{i}. {comment}")
 
             st.subheader("📊 感情分布（円グラフ）")
-            # fig, ax = plt.subplots()
+            fig, ax = plt.subplots()
             labels = list(st.session_state['sentiment_counts'].keys())
             sizes = list(st.session_state['sentiment_counts'].values())
             plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
-            plt.show()
-            # ax.axis('equal')
-            # st.pyplot(fig)
+            ax.axis('equal')
+            st.pyplot(fig)
 
         with tab3:
             # カテゴリごとの要約
@@ -223,13 +222,24 @@ def main():
             st.subheader("🏆 重要度スコア上位コメント")
             top_10 = st.session_state['scored_comments_df'].head(10)
             for _, row in top_10.iterrows():
+                category = get_category_label(row['comment'])
                 with st.expander(row['comment'][:40] + "..."):
                     st.write(f"コメント全文: {row['comment']}")
+                    st.markdown(f"- カテゴリ: **{category}**")
                     st.markdown(f"- 具体性: {row['specificity']} / 1.0")
                     st.markdown(f"- 緊急性: {row['urgency']} / 1.0")
                     st.markdown(f"- 共通性: {row['commonality']:.2f} / 1.0")
-                    st.markdown(f"- 重要度スコア: {row['importance_score']} / 10")
-
+                    st.markdown("""
+                    <style>
+                    .big-font {
+                        font-size:20px ！important;
+                        font-weight: bold;
+                        color: #0066cc;
+                    }
+                    </style>
+                    """, unsafe_allow_html=True)
+                    st.markdown(f'<p class="big-font">- 重要度スコア: {row['importance_score']} / 10</p>', unsafe_allow_html=True)
+                    
             st.subheader("📈 重要度スコア分布")
             fig3, ax3 = plt.subplots()
             st.session_state['scored_comments_df']['importance_score'].hist(bins=20, ax=ax3)
