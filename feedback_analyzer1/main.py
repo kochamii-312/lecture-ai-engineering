@@ -14,7 +14,7 @@ from clustering import summarize_comments, cluster_comments
 from importance import score_specificity, score_urgency, score_commonality, score_importance, get_cluster_number, get_cluster_size_and_total
 from danger import extract_dangerous_comments
 
-matplotlib.font_manager._rebuild()
+# matplotlib.font_manager._rebuild()
 # matplotlib.rcParams['font.family'] = 'IPAexGothic'
 
 load_dotenv()
